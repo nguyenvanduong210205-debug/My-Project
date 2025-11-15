@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thiết bị Y tế - DHST Healthcare</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===== PHẦN TỔNG QUAN VÀ MÀU SẮC CHỦ ĐẠO ===== */
+* {margin:0; padding:0; box-sizing:border-box; font-family:"Montserrat",sans-serif;}
+body {background:#f4f7f9; color:#333; line-height:1.6;}
+a {text-decoration: none; color: inherit;}
+ul {list-style: none;}
+
+/* Màu sắc chủ đạo: Xanh Nước Biển */
+:root {
+    --primary-color: #0A66C2; 
+    --primary-light: #4285F4; 
+    --primary-dark: #074a8d; 
+    --accent-color: #FFD700; /* Màu vàng Gold cho điểm nhấn */
+    --text-color: #4a4a4a;
+    --bg-light: #ffffff;
+    --bg-grey-soft: #e8f4ff; 
+}
+
+/* ===== HEADER NGHỆ THUẬT - XANH NƯỚC BIỂN ===== */
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--bg-light);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 60px; 
+    border-bottom: 1px solid #e0e0e0;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.logo img {
+    border-radius: 50%;
+    border: 4px solid var(--primary-color);
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 102, 194, 0.3);
+}
+.logo-title-group {
+    text-align: left;
+}
+.logo-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.hospital-slogan {
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary-light);
+    margin-top: 5px;
+}
+.call-to-action {
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s, transform 0.3s;
+}
+.call-to-action:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 102, 194, 0.4);
+}
+.main-nav-bar {
+    background: var(--primary-color);
+    padding: 0 60px;
+    min-height: 65px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-links {
+    display: flex;
+    gap: 0;
+}
+.nav-item {
+    position: relative;
+    padding: 0 20px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: white;
+    transition: background 0.3s, color 0.3s, transform 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align:center;
+}
+.nav-item:hover, .nav-item.active {
+    background: var(--primary-light);
+    color: white;
+    transform: translateY(-2px);
+    border-bottom: 3px solid var(--accent-color);
+}
+.nav-item.active {
+     background: var(--primary-dark);
+     color: var(--accent-color);
+     border-bottom: 3px solid var(--accent-color);
+}
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.2);
+}
+.search-bar input {
+    padding: 8px 12px;
+    border: none;
+    outline: none;
+    width: 180px;
+    background: transparent;
+    color: white;
+    &::placeholder {
+        color: rgba(255,255,255,0.7);
+    }
+}
+.search-bar button {
+    background: var(--primary-light);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.search-bar button:hover {
+    background: var(--primary-dark);
+}
+
+/* ===== EQUIPMENT SECTION - THIẾT BỊ ĐẶC SẮC ===== */
+.equipment-section {
+    padding: 60px 20px 80px;
+    background: var(--bg-grey-soft);
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.section-title {
+    text-align: center;
+    font-size: 38px;
+    color: var(--primary-dark);
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+}
+.section-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    max-width: 800px;
+    margin: 0 auto 50px;
+}
+
+/* BANNER CÔNG NGHỆ */
+.technology-banner {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    margin-bottom: 50px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 102, 194, 0.4);
+}
+.technology-banner h3 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+.technology-banner p {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+/* EQUIPMENT GRID */
+.equipment-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 60px; /* Khoảng cách lớn giữa các thiết bị */
+}
+.equipment-card {
+    display: flex;
+    background: var(--bg-light);
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: transform 0.4s;
+    overflow: hidden;
+}
+.equipment-card:nth-child(even) {
+    flex-direction: row-reverse; /* Đảo ngược thứ tự cho card chẵn */
+}
+.equipment-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 102, 194, 0.2);
+}
+
+.equipment-image {
+    flex: 1;
+    min-width: 45%;
+    height: 350px;
+    overflow: hidden;
+}
+.equipment-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+.equipment-card:hover img {
+    transform: scale(1.03);
+}
+
+.equipment-details {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.equipment-details h3 {
+    font-size: 28px;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+}
+.equipment-details .category {
+    font-size: 16px;
+    color: var(--primary-light);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+.equipment-details p {
+    font-size: 16px;
+    color: var(--text-color);
+    margin-bottom: 20px;
+}
+.equipment-features ul {
+    list-style: none;
+    padding-left: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.equipment-features li {
+    font-size: 15px;
+    color: var(--primary-dark);
+    font-weight: 500;
+}
+.equipment-features li i {
+    color: var(--accent-color);
+    margin-right: 8px;
+}
+.view-details-btn {
+    display: block;
+    width: fit-content;
+    background: var(--primary-color);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+.view-details-btn:hover {
+    background: var(--primary-dark);
+}
+
+/* FOOTER (Đơn giản) */
+.main-footer {
+    background: var(--primary-dark);
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .top-bar, .main-nav-bar {padding: 10px 30px;}
+    .equipment-section {padding: 40px 10px;}
+    .equipment-card {
+        flex-direction: column !important; /* Đảm bảo 1 cột trên iPad/tablet */
+    }
+    .equipment-image {
+        min-width: 100%;
+        height: 250px;
+    }
+    .equipment-features ul {
+        grid-template-columns: 1fr;
+    }
+    .equipment-details {
+        padding: 20px;
+    }
+    .equipment-details h3 {
+        font-size: 24px;
+    }
+    .view-details-btn {
+        margin: 0 auto;
+    }
+}
+@media (max-width: 768px) {
+    .top-bar {flex-direction: column; gap: 10px; padding: 10px 20px;}
+    .call-to-action {display: none;}
+    .main-nav-bar {flex-direction: column; padding: 10px 20px; min-height: auto;}
+    .nav-links {flex-wrap: wrap; justify-content: center; gap: 5px; width: 100%;}
+    .nav-item {padding: 8px 10px; height: auto; font-size: 14px;}
+    .search-bar {margin-top: 15px; width: 100%;}
+    .section-title {font-size: 30px;}
+    .section-subtitle {font-size: 16px;}
+}
+</style>
+</head>
+
+<body>
+
+<header class="main-header">
+    <div class="top-bar">
+        <div class="logo">
+            <img src="logo.jpg" alt="DHST Healthcare Logo"> 
+            <div class="logo-title-group">
+                <div class="logo-title">DHST Healthcare</div>
+                <div class="hospital-slogan">Y Học Tiên Tiến - Chăm Sóc Tận Tâm</div>
+            </div>
+        </div>
+        <a href="tel:19001234" class="call-to-action">
+            <i class="fas fa-phone-alt"></i>
+            Tổng đài Hỗ trợ: 1900.1234
+        </a>
+    </div>
+
+    <nav class="main-nav-bar">
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-item ">Trang chủ</a></li>
+            <li><a href="tin-tuc.html" class="nav-item">Tin tức & Bài viết</a></li>
+            <li><a href="dich-vu.html" class="nav-item">Dịch vụ</a></li>
+            <li><a href="bac-si.html" class="nav-item">Đội ngũ bác sĩ</a></li>
+            <li><a href="thiet-bi.html" class="nav-item active">Thiết bị</a></li>
+            <li><a href="dat-lich.html" class="nav-item">Đặt lịch khám</a></li>
+            <li><a href="tra-cuu.html" class="nav-item">Tra cứu kết quả</a></li>
+        </ul>
+        
+    </nav>
+</header>
+
+<main>
+    <section class="equipment-section">
+        <div class="container">
+            <h2 class="section-title">CÔNG NGHỆ & THIẾT BỊ Y TẾ HIỆN ĐẠI</h2>
+            <p class="section-subtitle">DHST Healthcare liên tục đầu tư vào hệ thống máy móc, thiết bị chẩn đoán và điều trị tiên tiến nhất từ các thương hiệu hàng đầu thế giới, đảm bảo kết quả chính xác và hiệu quả điều trị tối ưu.</p>
+
+            <div class="technology-banner">
+                <h3>TIÊU CHUẨN VÀNG TRONG CHẨN ĐOÁN</h3>
+                <p>Mọi thiết bị đều đạt chuẩn Quốc tế (ISO, CE) và được kiểm định định kỳ nghiêm ngặt.</p>
+            </div>
+
+            <div class="equipment-grid">
+                
+                <div class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="tb1.png" alt="Máy MRI 3.0 Tesla">
+                    </div>
+                    <div class="equipment-details">
+                        <span class="category">Chẩn đoán hình ảnh cao cấp</span>
+                        <h3>HỆ THỐNG CỘNG HƯỞNG TỪ MRI 3.0T</h3>
+                        <p>Máy MRI 3.0 Tesla thế hệ mới mang lại hình ảnh độ phân giải siêu cao, giúp phát hiện sớm và chính xác các tổn thương nhỏ trong não, cột sống và hệ cơ xương khớp, đặc biệt hiệu quả trong chẩn đoán Ung bướu và Thần kinh.</p>
+                        <div class="equipment-features">
+                            <ul>
+                                <li><i class="fas fa-microchip"></i> Độ phân giải 3.0 Tesla</li>
+                                <li><i class="fas fa-brain"></i> Chẩn đoán Thần kinh, Cơ xương khớp</li>
+                                <li><i class="fas fa-shield-alt"></i> Giảm tiếng ồn, thân thiện với bệnh nhân</li>
+                                <li><i class="fas fa-hourglass-half"></i> Rút ngắn thời gian chụp</li>
+                            </ul>
+                        </div>
+                        <a href="#" class="view-details-btn">Xem chi tiết công nghệ</a>
+                    </div>
+                </div>
+
+                <div class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="tb2.png" alt="Máy CT 128 Lát cắt">
+                    </div>
+                    <div class="equipment-details">
+                        <span class="category">Chẩn đoán hình ảnh đa chiều</span>
+                        <h3>MÁY CHỤP CT SCAN 128 LÁT CẮT</h3>
+                        <p>Cho phép tái tạo hình ảnh 3D với tốc độ nhanh kỷ lục, giảm thiểu tối đa liều tia xạ cho bệnh nhân. Thiết bị này hoàn hảo cho việc tầm soát toàn thân, đặc biệt là đánh giá tim mạch và mạch máu.</p>
+                        <div class="equipment-features">
+                            <ul>
+                                <li><i class="fas fa-radiation"></i> Liều tia cực thấp (Low-dose CT)</li>
+                                <li><i class="fas fa-heartbeat"></i> Đánh giá Tim mạch (CT mạch vành)</li>
+                                <li><i class="fas fa-tachometer-alt"></i> Tốc độ chụp nhanh</li>
+                                <li><i class="fas fa-cut"></i> Độ phân giải 128 lát cắt</li>
+                            </ul>
+                        </div>
+                        <a href="#" class="view-details-btn">Xem chi tiết công nghệ</a>
+                    </div>
+                </div>
+                
+                <div class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="tb3.png" alt="Phòng phẫu thuật nội soi">
+                    </div>
+                    <div class="equipment-details">
+                        <span class="category">Phẫu thuật can thiệp tối thiểu</span>
+                        <h3>HỆ THỐNG PHẪU THUẬT NỘI SOI FULL HD</h3>
+                        <p>Cung cấp hình ảnh chất lượng cao nhất trong phòng mổ, giúp các bác sĩ ngoại khoa thực hiện các ca phẫu thuật phức tạp qua vết mổ nhỏ, giảm đau, giảm mất máu và rút ngắn thời gian hồi phục cho bệnh nhân.</p>
+                        <div class="equipment-features">
+                            <ul>
+                                <li><i class="fas fa-video"></i> Hình ảnh Full HD 4K</li>
+                                <li><i class="fas fa-procedures"></i> Ứng dụng Ngoại khoa Tiêu hóa, Tiết niệu</li>
+                                <li><i class="fas fa-plus-circle"></i> Giảm thiểu xâm lấn</li>
+                                <li><i class="fas fa-hospital-symbol"></i> Hồi phục nhanh chóng</li>
+                            </ul>
+                        </div>
+                        <a href="#" class="view-details-btn">Xem chi tiết công nghệ</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer">
+    <p>© 2025 DHST Healthcare | Liên hệ Tổng đài: 1900.888.666</p>
+</footer>
+
+</body>
+</html>

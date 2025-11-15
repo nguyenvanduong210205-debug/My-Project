@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đội ngũ Bác sĩ - DHST Healthcare</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===== PHẦN TỔNG QUAN VÀ MÀU SẮC CHỦ ĐẠO ===== */
+* {margin:0; padding:0; box-sizing:border-box; font-family:"Montserrat",sans-serif;}
+body {background:#f4f7f9; color:#333; line-height:1.6;}
+a {text-decoration: none; color: inherit;}
+ul {list-style: none;}
+
+/* Màu sắc chủ đạo: Xanh Nước Biển */
+:root {
+    --primary-color: #0A66C2; 
+    --primary-light: #4285F4; 
+    --primary-dark: #074a8d; 
+    --accent-color: #FFD700; /* Màu vàng Gold cho điểm nhấn */
+    --text-color: #4a4a4a;
+    --bg-light: #ffffff;
+    --bg-grey-soft: #e8f4ff; 
+}
+
+/* ===== HEADER NGHỆ THUẬT - XANH NƯỚC BIỂN ===== */
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--bg-light);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 60px; 
+    border-bottom: 1px solid #e0e0e0;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.logo img {
+    border-radius: 50%;
+    border: 4px solid var(--primary-color);
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 102, 194, 0.3);
+}
+.logo-title-group {
+    text-align: left;
+}
+.logo-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.hospital-slogan {
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary-light);
+    margin-top: 5px;
+}
+.call-to-action {
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s, transform 0.3s;
+}
+.call-to-action:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 102, 194, 0.4);
+}
+.main-nav-bar {
+    background: var(--primary-color);
+    padding: 0 60px;
+    min-height: 65px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-links {
+    display: flex;
+    gap: 0;
+}
+.nav-item {
+    position: relative;
+    padding: 0 20px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: white;
+    transition: background 0.3s, color 0.3s, transform 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align:center;
+}
+.nav-item:hover, .nav-item.active {
+    background: var(--primary-light);
+    color: white;
+    transform: translateY(-2px);
+    border-bottom: 3px solid var(--accent-color);
+}
+.nav-item.active {
+     background: var(--primary-dark);
+     color: var(--accent-color);
+     border-bottom: 3px solid var(--accent-color);
+}
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.2);
+}
+.search-bar input {
+    padding: 8px 12px;
+    border: none;
+    outline: none;
+    width: 180px;
+    background: transparent;
+    color: white;
+    &::placeholder {
+        color: rgba(255,255,255,0.7);
+    }
+}
+.search-bar button {
+    background: var(--primary-light);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.search-bar button:hover {
+    background: var(--primary-dark);
+}
+
+/* ===== DOCTOR TEAM SECTION - CẬP NHẬT ===== */
+.doctor-section {
+    padding: 60px 20px 80px;
+    background: var(--bg-grey-soft);
+}
+.section-title {
+    text-align: center;
+    font-size: 38px;
+    color: var(--primary-dark);
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+}
+.section-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    max-width: 800px;
+    margin: 0 auto 50px;
+}
+
+/* SEARCH & FILTER BAR */
+.filter-bar {
+    max-width: 1000px;
+    margin: 0 auto 40px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.search-doctor {
+    position: relative;
+}
+.search-doctor input {
+    padding: 12px 15px;
+    width: 300px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: all 0.3s;
+    padding-left: 45px;
+}
+.search-doctor i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 15px;
+    color: var(--primary-light);
+}
+.search-doctor input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(10, 102, 194, 0.3);
+}
+.filter-select select {
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    outline: none;
+    appearance: none;
+    background: url('data:image/svg+xml;charset=US-8859-1,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M9.293%2012.95l.707.707L15.657%208l-1.414-1.414L10%2010.828%205.757%206.586%204.343%208z%22%20fill%3D%22%230A66C2%22%2F%3E%3C%2Fsvg%3E') no-repeat right 10px center;
+    background-size: 14px;
+    color: var(--primary-dark);
+    font-weight: 500;
+}
+
+/* DOCTOR CARDS GRID */
+.doctor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 35px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.doctor-card {
+    background: var(--bg-light);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: transform 0.4s, box-shadow 0.4s;
+    border: 1px solid #e0e0e0;
+}
+.doctor-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 40px rgba(0, 102, 194, 0.3);
+}
+.doctor-photo {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    position: relative;
+}
+.doctor-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+.doctor-card:hover img {
+    transform: scale(1.05);
+}
+.expertise-tag {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    background: var(--accent-color);
+    color: var(--primary-dark);
+    padding: 6px 15px;
+    font-size: 14px;
+    font-weight: 700;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    box-shadow: -2px 2px 5px rgba(0,0,0,0.2);
+}
+.doctor-info {
+    padding: 25px;
+    text-align: center;
+}
+.doctor-info h3 {
+    font-size: 24px;
+    color: var(--primary-dark);
+    margin-bottom: 5px;
+    font-family: 'Oswald', sans-serif;
+}
+.doctor-info .title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+.doctor-info .department {
+    color: #666;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+/* Thêm nút Đặt lịch chung nổi bật */
+.book-all-btn {
+    display: block;
+    width: fit-content;
+    margin: 40px auto 0;
+    background: var(--primary-color);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: 700;
+    transition: background 0.3s, transform 0.3s;
+    box-shadow: 0 6px 20px rgba(0, 102, 194, 0.4);
+}
+.book-all-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 102, 194, 0.6);
+}
+
+/* FOOTER (Đơn giản) */
+.main-footer {
+    background: var(--primary-dark);
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .top-bar {flex-direction: column; gap: 10px; padding: 10px 20px;}
+    .call-to-action {display: none;}
+    .main-nav-bar {flex-direction: column; padding: 10px 20px; min-height: auto;}
+    .nav-links {flex-wrap: wrap; justify-content: center; gap: 5px; width: 100%;}
+    .nav-item {padding: 8px 10px; height: auto; font-size: 14px;}
+    .search-bar {margin-top: 15px; width: 100%;}
+    .doctor-section {padding: 40px 10px;}
+    .section-title {font-size: 30px;}
+    .section-subtitle {font-size: 16px;}
+    .filter-bar {flex-direction: column; gap: 15px;}
+    .search-doctor input, .filter-select select {width: 100%;}
+    .doctor-grid {gap: 25px; grid-template-columns: 1fr;}
+    .doctor-photo {height: 300px;}
+    .book-all-btn {width: 90%; font-size: 16px; padding: 12px 20px;}
+}
+</style>
+</head>
+
+<body>
+
+<header class="main-header">
+    <div class="top-bar">
+        <div class="logo">
+            <img src="logo.jpg" alt="DHST Healthcare Logo"> 
+            <div class="logo-title-group">
+                <div class="logo-title">DHST Healthcare</div>
+                <div class="hospital-slogan">Y Học Tiên Tiến - Chăm Sóc Tận Tâm</div>
+            </div>
+        </div>
+        <a href="tel:19001234" class="call-to-action">
+            <i class="fas fa-phone-alt"></i>
+            Tổng đài Hỗ trợ: 1900.1234
+        </a>
+    </div>
+
+    <nav class="main-nav-bar">
+        <ul class="nav-links">
+              <li><a href="index.html" class="nav-item ">Trang chủ</a></li>
+            <li><a href="tin-tuc.html" class="nav-item">Tin tức & Bài viết</a></li>
+            <li><a href="dich-vu.html" class="nav-item">Dịch vụ</a></li>
+            <li><a href="bac-si.html" class="nav-item active">Đội ngũ bác sĩ</a></li>
+            <li><a href="thiet-bi.html" class="nav-item">Thiết bị</a></li>
+            <li><a href="dat-lich.html" class="nav-item">Đặt lịch khám</a></li>
+            <li><a href="tra-cuu.html" class="nav-item">Tra cứu kết quả</a></li>
+        </ul>
+       
+    </nav>
+</header>
+
+<main>
+    <section class="doctor-section">
+        <h2 class="section-title">ĐỘI NGŨ CHUYÊN GIA HÀNG ĐẦU DHST</h2>
+        <p class="section-subtitle">Tự hào quy tụ đội ngũ Giáo sư, Tiến sĩ, Bác sĩ chuyên khoa giàu kinh nghiệm, tận tâm, cam kết mang lại chất lượng khám chữa bệnh tốt nhất cho quý bệnh nhân.</p>
+
+        <div class="filter-bar">
+            <div class="search-doctor">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Tìm kiếm tên bác sĩ...">
+            </div>
+            <div class="filter-select">
+                <select>
+                    <option value="">Lọc theo Chuyên khoa</option>
+                    <option>Tim mạch can thiệp</option>
+                    <option>Nội tổng hợp</option>
+                    <option>Nhi khoa</option>
+                    <option>Ung bướu</option>
+                </select>
+            </div>
+            <div class="filter-select">
+                <select>
+                    <option value="">Lọc theo Học vị</option>
+                    <option>Giáo sư - Tiến sĩ</option>
+                    <option>Phó Giáo sư</option>
+                    <option>Bác sĩ Chuyên khoa II</option>
+                    <option>Thạc sĩ - Bác sĩ</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="doctor-grid">
+            <div class="doctor-card">
+                <div class="doctor-photo">
+                    <img src="duyen.png" alt="GS.duyen">
+                    <span class="expertise-tag">Chuyên gia cấp cao</span>
+                </div>
+                <div class="doctor-info">
+                    <h3>GS.TS. Đỗ Thị Hồng Duyên</h3>
+                    <p class="title">Giáo sư - Tiến sĩ Y khoa</p>
+                    <p class="department">Giám đốc Trung tâm Tim mạch DHST</p>
+                </div>
+            </div>
+<div class="doctor-card">
+                <div class="doctor-photo">
+                    <img src="hue.png" alt="TS.BS. hue">
+                    <span class="expertise-tag">Trưởng khoa</span>
+                </div>
+                <div class="doctor-info">
+                    <h3>TS.BS. Cao Thu Huệ</h3>
+                    <p class="title">Tiến sĩ - Bác sĩ</p>
+                    <p class="department">Chuyên gia Hô hấp & Dinh dưỡng Nhi</p>
+                </div>
+            </div>
+
+            <div class="doctor-card">
+                <div class="doctor-photo">
+                    <img src="tam.png" alt="PGS.tâm">
+                    <span class="expertise-tag">Chủ tịch Hội đồng</span>
+                </div>
+                <div class="doctor-info">
+                    <h3>PGS.TS. Chu Bá Tâm </h3>
+                    <p class="title">Phó Giáo sư - Tiến sĩ</p>
+                    <p class="department">Trưởng khoa Sản Phụ Khoa & Hỗ trợ sinh sản</p>
+                </div>
+            </div>
+
+            
+            <div class="doctor-card">
+                <div class="doctor-photo">
+                    <img src="sang.png" alt="BSCKII. sang">
+                    <span class="expertise-tag">Phó Trưởng khoa</span>
+                </div>
+                <div class="doctor-info">
+                    <h3>BSCKII. Nguyễn Quang Sáng </h3>
+                    <p class="title">Bác sĩ Chuyên khoa II</p>
+                    <p class="department">Phụ trách Ngoại Tổng quát & Ngoại Tiêu hóa</p>
+                </div>
+            </div>
+            
+            <div class="doctor-card">
+                <div class="doctor-photo">
+                    <img src="duong.png" alt="ThS.BS. duong">
+                    <span class="expertise-tag">Bác sĩ</span>
+                </div>
+                <div class="doctor-info">
+                    <h3>ThS.BS. Nguyễn Văn Dương</h3>
+                    <p class="title">Thạc sĩ - Bác sĩ</p>
+                    <p class="department">Phụ trách Đơn vị Đột quỵ & Thần kinh</p>
+                </div>
+            </div>
+            
+            <div class="doctor-card">
+                <div class="doctor-photo">
+                    <img src="bs1.png" alt="ThS.BS. Hoàng Trung Kiên">
+                    <span class="expertise-tag">Bác sĩ</span>
+                </div>
+                <div class="doctor-info">
+                    <h3>ThS.BS. Hoàng Trung Kiên</h3>
+                    <p class="title">Thạc sĩ - Bác sĩ</p>
+                    <p class="department">Chuyên gia Lão khoa và Nội tiết</p>
+                </div>
+            </div>
+
+        </div>
+        
+        <a href="dat-lich.html" class="book-all-btn">
+            <i class="fas fa-calendar-check"></i> ĐẶT LỊCH KHÁM NGAY
+        </a>
+    </section>
+</main>
+
+<footer class="main-footer">
+    <p>© 2025 DHST Healthcare | Liên hệ Tổng đài: 1900.888.666</p>
+</footer>
+</body>
+</html>

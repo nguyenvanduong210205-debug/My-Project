@@ -1,0 +1,310 @@
+ <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt lịch khám - DHST Healthcare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== PHẦN TỔNG QUAN VÀ MÀU SẮC CHỦ ĐẠO ===== */
+        * {margin:0; padding:0; box-sizing:border-box; font-family:"Montserrat",sans-serif;}
+        body {background:#f4f7f9; color:#333; line-height:1.6;}
+        a {text-decoration: none; color: inherit;}
+        ul {list-style: none;}
+
+        /* Màu sắc chủ đạo: Xanh Nước Biển */
+        :root {
+            --primary-color: #0A66C2; 
+            --primary-light: #4285F4; 
+            --primary-dark: #074a8d; 
+            --accent-color: #FFD700;
+            --text-color: #4a4a4a;
+            --bg-light: #ffffff;
+            --bg-grey-soft: #e8f4ff; 
+            --success-color: #28a745;
+            --error-color: #dc3545;
+        }
+
+        /* ===== HEADER ===== */
+        .main-header { position: sticky; top: 0; z-index: 1000; background: var(--bg-light); box-shadow: 0 4px 15px rgba(0,0,0,0.1);}
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 60px; border-bottom: 1px solid #e0e0e0;}
+        .logo { display: flex; align-items: center; gap: 15px;}
+        .logo img { border-radius: 50%; border: 4px solid var(--primary-color); width: 60px; height: 60px; object-fit: cover; box-shadow: 0 0 10px rgba(0, 102, 194, 0.3);}
+        .logo-title-group { text-align: left;}
+        .logo-title { font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700; color: var(--primary-dark); line-height: 1; text-transform: uppercase; letter-spacing: 1px;}
+        .hospital-slogan { font-style: normal; font-size: 16px; font-weight: 500; color: var(--primary-light); margin-top: 5px;}
+        .call-to-action { background: var(--primary-color); color: white; padding: 10px 20px; border-radius: 25px; font-weight: 600; display: flex; align-items: center; gap: 10px; transition: background 0.3s, transform 0.3s;}
+        .call-to-action:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 102, 194, 0.4);}
+        .main-nav-bar { background: var(--primary-color); padding: 0 60px; min-height: 65px; display: flex; justify-content: space-between; align-items: center;}
+        .nav-links { display: flex; gap: 0;}
+        .nav-item { position: relative; padding: 0 20px; height: 65px; display: flex; align-items: center; font-weight: 600; color: white; transition: background 0.3s, color 0.3s, transform 0.3s; text-transform: uppercase; letter-spacing: 0.5px; text-align:center;}
+        .nav-item:hover, .nav-item.active { background: var(--primary-light); color: white; transform: translateY(-2px); border-bottom: 3px solid var(--accent-color);}
+        .nav-item.active { background: var(--primary-dark); color: var(--accent-color); border-bottom: 3px solid var(--accent-color);}
+        .search-bar { display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; overflow: hidden; background: rgba(255,255,255,0.2);}
+        .search-bar input { padding: 8px 12px; border: none; outline: none; width: 180px; background: transparent; color: white;}
+        .search-bar input::placeholder { color: rgba(255,255,255,0.7);}
+        .search-bar button { background: var(--primary-light); color: white; border: none; padding: 8px 15px; cursor: pointer; transition: background 0.3s;}
+        .search-bar button:hover { background: var(--primary-dark);}
+
+        /* ===== BOOKING SECTION ===== */
+        .booking-section { background: url('https://source.unsplash.com/1600x900/?medical,clinic') no-repeat center center/cover; position: relative; padding: 80px 20px;}
+        .booking-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.95); z-index: 1;}
+        .booking-content-wrapper { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto;}
+        .booking-header { text-align: center; margin-bottom: 40px;}
+        .booking-header h2 { font-size: 38px; color: var(--primary-dark); font-weight: 700; margin-bottom: 10px; font-family: 'Oswald', sans-serif; text-transform: uppercase;}
+        .booking-header p { color: #666; font-size: 18px; max-width: 700px; margin: 0 auto;}
+        .booking-form-container { max-width: 850px; margin: 0 auto; background: var(--bg-light); padding: 40px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); border-top: 5px solid var(--primary-color);}
+        .booking-form-container h3 { text-align: center; color: var(--primary-color); font-size: 24px; font-weight: 700; margin-bottom: 30px;}
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px;}
+        .form-group { position: relative;}
+        .form-group.full-width { grid-column: 1 / -1;}
+        .form-group i { position: absolute; top: 50%; transform: translateY(-50%); left: 20px; color: var(--primary-light); font-size: 18px; pointer-events: none;}
+        .booking-form-container input, .booking-form-container select, .booking-form-container textarea { width: 100%; padding: 16px 20px; padding-left: 50px; font-size: 16px; border-radius: 12px; border: 1px solid #ccc; transition: 0.3s; outline: none; background: #fcfcfc; appearance: none;}
+        .booking-form-container textarea { padding-left: 20px; min-height: 100px;}
+        .booking-form-container input:focus, .booking-form-container select:focus, .booking-form-container textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 8px rgba(10, 102, 194, 0.5);}
+        .select-wrapper { position: relative;}
+        .select-wrapper i { left: 20px;}
+        .select-wrapper::after { content: "\f078"; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--primary-light); pointer-events: none;}
+        .booking-form-container button { grid-column: 1 / -1; background: linear-gradient(90deg, var(--primary-color), var(--primary-light)); color: var(--accent-color); border: none; padding: 18px; font-size: 20px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 25px rgba(0, 102, 194, 0.4); letter-spacing: 1px; margin-top: 15px;}
+        .booking-form-container button:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0, 102, 194, 0.6); background: var(--primary-dark);}
+        .booking-form-container button:disabled { background: #aaa; cursor: not-allowed; box-shadow: none; transform: none;}
+        .booking-form-container button i { color: var(--accent-color); margin-right: 10px;}
+        
+        /* CSS CHO KHUNG GIỜ ĐÃ ĐẦY */
+        select option.full-slot {
+            color: #999;
+            background-color: #f0f0f0;
+            text-decoration: line-through;
+        }
+
+        /* VÙNG HIỂN THỊ KẾT QUẢ */
+        #booking-result { margin-top: 30px; padding: 25px; border-radius: 12px; text-align: left; display: none; }
+        #booking-result.success { background-color: #e9f7ef; border-left: 5px solid var(--success-color);}
+        #booking-result.error { background-color: #fdecea; border-left: 5px solid var(--error-color);}
+        #booking-result h4 { font-size: 22px; margin-bottom: 15px; }
+        #booking-result.success h4 { color: var(--success-color); }
+        #booking-result.error h4 { color: var(--error-color); }
+        #booking-result p { margin-bottom: 8px; font-size: 16px; }
+        #booking-result strong { color: var(--primary-dark); }
+        
+        /* FOOTER */
+        .main-footer { background: var(--primary-dark); color: white; text-align: center; padding: 20px 0; margin-top: 0;}
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) { .top-bar {flex-direction: column; gap: 10px; padding: 10px 20px;} .call-to-action {display: none;} .main-nav-bar {flex-direction: column; padding: 10px 20px; min-height: auto;} .nav-links {flex-wrap: wrap; justify-content: center; gap: 5px; width: 100%;} .nav-item {padding: 8px 10px; height: auto; font-size: 14px;} .search-bar {margin-top: 15px; width: 100%;} .booking-section {padding: 40px 10px;} .booking-header h2 {font-size: 30px;} .booking-form-container {padding: 30px 20px;} .form-grid { grid-template-columns: 1fr; gap: 15px; } .booking-form-container input, .booking-form-container select { padding-left: 45px; } .form-group i { left: 15px; } .select-wrapper::after { right: 15px; } }
+    </style>
+</head>
+<body>
+    <header class="main-header"> <div class="top-bar"> <div class="logo"> <img src="logo.jpg" alt="DHST Healthcare Logo"> <div class="logo-title-group"> <div class="logo-title">DHST Healthcare</div> <div class="hospital-slogan">Y Học Tiên Tiến - Chăm Sóc Tận Tâm</div> </div> </div> <a href="tel:19001234" class="call-to-action"> <i class="fas fa-phone-alt"></i> Tổng đài Hỗ trợ: 1900.1234 </a> </div> <nav class="main-nav-bar"> <ul class="nav-links"> <li><a href="index.html" class="nav-item ">Trang chủ</a></li> <li><a href="tin-tuc.html" class="nav-item">Tin tức & Bài viết</a></li> <li><a href="dich-vu.html" class="nav-item">Dịch vụ</a></li> <li><a href="bac-si.html" class="nav-item">Đội ngũ bác sĩ</a></li> <li><a href="thiet-bi.html" class="nav-item">Thiết bị</a></li> <li><a href="dat-lich.html" class="nav-item active">Đặt lịch khám</a></li> <li><a href="tra-cuu.html" class="nav-item">Tra cứu kết quả</a></li> </ul> </nav> </header>
+    
+    <main>
+        <section class="booking-section">
+            <div class="booking-content-wrapper">
+                <div class="booking-header">
+                    <h2>ĐẶT LỊCH KHÁM CHỦ ĐỘNG</h2>
+                    <p>Quý khách vui lòng điền đầy đủ thông tin để đăng ký lịch khám nhanh chóng. DHST sẽ liên hệ xác nhận trong vòng 30 phút.</p>
+                </div>
+
+                <div class="booking-form-container">
+                    <h3>VUI LÒNG ĐIỀN THÔNG TIN BỆNH NHÂN</h3>
+                    <form id="booking-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="ten_benhnhan" name="ten_benhnhan" placeholder="Họ và tên bệnh nhân" required>
+                            </div>
+                            <div class="form-group">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" id="sdt" name="sdt" placeholder="Số điện thoại liên hệ" required>
+                            </div>
+                            <div class="form-group">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="email" name="email" placeholder="Email (nếu có)">
+                            </div>
+                            <div class="form-group">
+                                <i class="fas fa-calendar-alt"></i>
+                                <input type="date" id="ngay" name="ngay" title="Ngày khám dự kiến" required>
+                            </div>
+                            <div class="form-group select-wrapper">
+                                <i class="fas fa-stethoscope"></i>
+                                <select id="id_khoa" name="id_khoa" required>
+                                    <option value="" disabled selected>Chọn khoa khám</option>
+                                </select>
+                            </div>
+                            <div class="form-group select-wrapper">
+                                <i class="far fa-clock"></i>
+                                <select id="khung_gio" name="khung_gio" required>
+                                    <option value="" disabled selected>Chọn khung giờ</option>
+                                    <option value="07:00:00">07:00 - 08:00</option>
+                                    <option value="08:00:00">08:00 - 09:00</option>
+                                    <option value="09:00:00">09:00 - 10:00</option>
+                                    <option value="10:00:00">10:00 - 11:00</option>
+                                    <option value="13:00:00">13:00 - 14:00</option>
+                                    <option value="14:00:00">14:00 - 15:00</option>
+                                    <option value="15:00:00">15:00 - 16:00</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <textarea id="ly_do" name="ly_do" rows="3" placeholder="Ghi rõ lý do khám hoặc triệu chứng sơ bộ..."></textarea>
+                            </div>
+                            <button type="submit" id="submit-btn">
+                                <i class="fas fa-calendar-check"></i> HOÀN TẤT ĐẶT LỊCH
+                            </button>
+                        </div>
+                    </form>
+                    <div id="booking-result"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="main-footer">
+        <p>© 2025 DHST Healthcare | Liên hệ Tổng đài: 1900.888.666</p>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const bookingForm = document.getElementById('booking-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const khoaSelect = document.getElementById('id_khoa');
+    const dateInput = document.getElementById('ngay');
+    const timeSelect = document.getElementById('khung_gio');
+    const resultDiv = document.getElementById('booking-result');
+
+    // HÀM LÀM MỜ GIỜ ĐẦY
+    const updateSlotAvailability = async () => {
+        const selectedKhoa = khoaSelect.value;
+        const selectedDate = dateInput.value;
+
+        // Reset tất cả các option về trạng thái bình thường
+        Array.from(timeSelect.options).forEach(option => {
+            if (option.value) {
+                option.disabled = false;
+                option.classList.remove('full-slot');
+                option.textContent = option.textContent.replace(' (Đầy)', '');
+            }
+        });
+
+        if (!selectedKhoa || !selectedDate) return;
+
+        try {
+            // ✅ Thêm localhost:3000 vào fetch để gọi đúng server backend
+            const res = await fetch(`http://localhost:3000/api/datlich/availability?ngay=${selectedDate}&id_khoa=${selectedKhoa}`);
+            const result = await res.json();
+
+            if (result.success && result.data.length > 0) {
+                const fullSlots = result.data;
+                Array.from(timeSelect.options).forEach(option => {
+                    if (fullSlots.includes(option.value)) {
+                        option.disabled = true;
+                        option.classList.add('full-slot');
+                        option.textContent += ' (Đầy)';
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Lỗi khi kiểm tra khung giờ:", error);
+        }
+    };
+    
+    // GỌI HÀM LÀM MỜ KHI THAY ĐỔI NGÀY HOẶC KHOA
+    khoaSelect.addEventListener('change', updateSlotAvailability);
+    dateInput.addEventListener('change', updateSlotAvailability);
+
+    // Load danh sách khoa
+    async function loadKhoa() {
+        try {
+            const res = await fetch("http://localhost:3000/api/khoa"); 
+            if (!res.ok) throw new Error('Không tải được danh sách khoa.');
+            const khoaList = await res.json();
+            khoaSelect.innerHTML = '<option value="" disabled selected>Chọn khoa khám</option>';
+            khoaList.forEach(khoa => {
+                const opt = document.createElement('option');
+                opt.value = khoa.id_khoa;
+                opt.textContent = khoa.ten_khoa;
+                khoaSelect.appendChild(opt);
+            });
+        } catch (err) {
+            console.warn('Lỗi load khoa:', err);
+        }
+    }
+    loadKhoa();
+
+    const setDateInputLimits = () => {
+        if (!dateInput) return;
+        const today = new Date();
+        const todayString = today.toISOString().split('T')[0];
+        const maxDate = new Date();
+        maxDate.setMonth(maxDate.getMonth() + 1);
+        const maxDateString = maxDate.toISOString().split('T')[0];
+        dateInput.min = todayString;
+        dateInput.max = maxDateString;
+    };
+
+     if (bookingForm) {
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
+            resultDiv.style.display = 'none';
+
+            const formData = {
+                ten_benhnhan: document.getElementById('ten_benhnhan').value,
+                sdt: document.getElementById('sdt').value,
+                email: document.getElementById('email').value,
+                ngay: dateInput.value,
+                khung_gio: timeSelect.value,
+                id_khoa: khoaSelect.value,
+                ly_do: document.getElementById('ly_do').value,
+            };
+            console.log("Dữ liệu Form chuẩn bị gửi đi:", formData);
+            try {
+                const response = await fetch('http://localhost:3000/api/datlich', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+                
+                const result = await response.json();
+                resultDiv.style.display = 'block';
+
+                if (response.ok && result.success) {
+                    const { appointment, doctor, ten_khoa } = result.data; 
+                    
+                    resultDiv.className = 'success';
+                    resultDiv.innerHTML = `
+                        <h4>✅ Đặt Lịch Thành Công!</h4>
+                        <p>Cảm ơn quý khách <strong>${appointment.ten_benhnhan}</strong> đã đặt lịch hẹn.</p>
+                        <p>Mã lịch hẹn của bạn là: <strong>DL-${appointment.id_datlich}</strong></p>
+                        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;">
+                        <p><strong>Khoa khám:</strong> ${ten_khoa}</p> <p><strong>Bác sĩ phụ trách:</strong> ${doctor.ho_ten}</p>
+                        <p><strong>Ngày hẹn:</strong> ${new Date(appointment.ngay).toLocaleDateString('vi-VN')}</p>
+                        <p><strong>Giờ hẹn:</strong> ${appointment.khung_gio}</p>
+                    `;
+                    bookingForm.style.display = 'none';
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.innerHTML = `<h4>❌ Đã có lỗi xảy ra</h4><p>${result.message || 'Không thể đặt lịch. Vui lòng thử lại.'}</p>`;
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> HOÀN TẤT ĐẶT LỊCH';
+                }
+            } catch (error) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `<h4>❌ Lỗi kết nối</h4><p>Không thể kết nối đến máy chủ.</p>`;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> HOÀN TẤT ĐẶT LỊCH';
+            }
+        });
+    }
+
+    // Chạy các hàm khởi tạo
+    loadKhoa();
+    setDateInputLimits();
+});
+</script>
+</body>
+</html>
+ 
+ 

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Hồ sơ bác sĩ</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+body{font-family:"Segoe UI",sans-serif;background:#f6f8fa;margin:0;}
+header{background:#2563eb;color:white;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;}
+header h2{margin:0;}
+button.logout{background:#ef4444;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;}
+.container{max-width:900px;margin:30px auto;background:white;padding:30px;border-radius:12px;box-shadow:0 0 15px rgba(0,0,0,0.1);}
+h3{color:#2563eb;border-bottom:2px solid #2563eb;padding-bottom:6px;}
+.form-group{margin-bottom:16px;}
+label{display:block;margin-bottom:6px;font-weight:600;}
+input,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:15px;box-sizing:border-box;}
+img#avatar{width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:16px;border:2px solid #2563eb;}
+button.save{background:#2563eb;color:white;border:none;padding:12px 24px;border-radius:8px;font-size:16px;cursor:pointer;}
+button.save:hover{background:#1d4ed8;}
+.message{margin-top:10px;font-size:14px;}
+.error{color:#dc2626;}
+.success{color:#16a34a;}
+</style>
+</head>
+<body>
+
+<header>
+<h2>Hồ sơ bác sĩ</h2>
+<button class="logout" id="logoutBtn">Đăng xuất</button>
+</header>
+
+<div class="container">
+<div style="text-align:center;">
+<img id="avatar" src="" alt="Ảnh bác sĩ">
+<h3 id="doctorName"></h3>
+</div>
+
+<form id="doctorForm">
+<div class="form-group"><label>Email:</label><input type="email" id="email"></div>
+<div class="form-group"><label>Số điện thoại:</label><input type="text" id="phone"></div>
+<div class="form-group"><label>Địa chỉ:</label><input type="text" id="diachi"></div>
+<div class="form-group"><label>Chuyên môn:</label><input type="text" id="chuyen_mon"></div>
+<div class="form-group"><label>Quá trình đào tạo:</label><textarea id="qua_trinh_dao_tao" rows="3"></textarea></div>
+<div class="form-group"><label>Quá trình công tác:</label><textarea id="qua_trinh_cong_tac" rows="3"></textarea></div>
+<div class="form-group"><label>Thế mạnh & kinh nghiệm:</label><textarea id="the_manh_kinh_nghiem" rows="3"></textarea></div>
+<button type="submit" class="save">Cập nhật</button>
+<div class="message" id="msg"></div>
+</form>
+</div>
+
+<script>
+const doctorId=localStorage.getItem("doctorId");
+const msg=document.getElementById("msg");
+
+// ✅ Nếu chưa login → quay về login
+if(!doctorId){
+  window.location.href="/nhanvien/login.html";
+}
+
+// ===== Lấy thông tin bác sĩ =====
+async function loadDoctor(){
+  try{
+    const res=await fetch(`/api/listdoctor/${doctorId}`);
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.message||"Lỗi tải dữ liệu");
+
+    document.getElementById("doctorName").textContent=data.ho_ten||"Chưa có tên";
+    document.getElementById("email").value=data.email||"";
+    document.getElementById("phone").value=data.phone||"";
+    document.getElementById("diachi").value=data.diachi||"";
+    document.getElementById("chuyen_mon").value=data.chuyen_mon||"";
+    document.getElementById("qua_trinh_dao_tao").value=data.qua_trinh_dao_tao||"";
+    document.getElementById("qua_trinh_cong_tac").value=data.qua_trinh_cong_tac||"";
+    document.getElementById("the_manh_kinh_nghiem").value=data.the_manh_kinh_nghiem||"";
+    document.getElementById("avatar").src=data.hinh_anh||"https://cdn-icons-png.flaticon.com/512/847/847969.png";
+  }catch(err){
+    msg.textContent=err.message;
+    msg.className="message error";
+  }
+}
+
+// ===== Cập nhật thông tin =====
+document.getElementById("doctorForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  msg.textContent="";
+  const body={
+    email:document.getElementById("email").value.trim(),
+    phone:document.getElementById("phone").value.trim(),
+    diachi:document.getElementById("diachi").value.trim(),
+    chuyen_mon:document.getElementById("chuyen_mon").value.trim(),
+    qua_trinh_dao_tao:document.getElementById("qua_trinh_dao_tao").value.trim(),
+    qua_trinh_cong_tac:document.getElementById("qua_trinh_cong_tac").value.trim(),
+    the_manh_kinh_nghiem:document.getElementById("the_manh_kinh_nghiem").value.trim()
+  };
+  try{
+    const res=await fetch(`/api/listdoctor/${doctorId}`,{
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(body)
+    });
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.message||"Cập nhật thất bại");
+    msg.textContent="✅ Cập nhật thành công!";
+    msg.className="message success";
+  }catch(err){
+    msg.textContent=err.message;
+    msg.className="message error";
+  }
+});
+
+// ===== Đăng xuất =====
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
+  localStorage.clear();
+  window.location.href="/nhanvien/login.html";
+});
+
+loadDoctor();
+</script>
+</body>
+</html>

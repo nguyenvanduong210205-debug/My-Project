@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DHST Healthcare - Bệnh viện đa khoa hàng đầu</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===== RESET VÀ CƠ BẢN ===== */
+* {margin:0; padding:0; box-sizing:border-box; font-family:"Montserrat",sans-serif;}
+body {background:#f4f7f9; color:#333; line-height:1.6;}
+a {text-decoration: none; color: inherit;}
+ul {list-style: none;}
+
+/* Màu sắc chủ đạo */
+:root {
+    --primary-color: #0A66C2; /* Xanh nước biển đậm hơn, chuyên nghiệp */
+    --primary-light: #4285F4; /* Xanh nước biển sáng hơn */
+    --primary-dark: #074a8d; /* Xanh nước biển rất đậm */
+    --accent-color: #FFD700; /* Màu vàng Gold cho điểm nhấn */
+    --text-color: #4a4a4a;
+    --bg-light: #ffffff;
+    --bg-grey: #e8f4ff; /* Nền xám xanh nhẹ */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.section-title {
+    text-align: center;
+    font-size: 36px; /* Lớn hơn */
+    color: var(--primary-dark);
+    margin-bottom: 20px; /* Giảm khoảng cách */
+    padding-top: 50px; /* Tăng padding trên */
+    position: relative;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+.section-title::after {
+    content: "";
+    position: absolute;
+    bottom: -10px; /* Đặt dưới tiêu đề */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px; /* Dài hơn */
+    height: 4px; /* Dày hơn */
+    background: var(--primary-light);
+    border-radius: 3px;
+}
+.section-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 50px; /* Tăng khoảng cách */
+    font-size: 18px;
+}
+
+/* ===== HEADER MỚI ===== */
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--bg-light);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Shadow rõ hơn */
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 60px; /* Tăng padding */
+    border-bottom: 1px solid #e0e0e0;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Tăng khoảng cách */
+}
+.logo img {
+    border-radius: 50%;
+    border: 4px solid var(--primary-color); /* Viền đậm hơn */
+    width: 60px; /* Lớn hơn */
+    height: 60px; /* Lớn hơn */
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 102, 194, 0.3); /* Shadow cho logo */
+}
+.logo-title-group {
+    text-align: left;
+}
+.logo-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 28px; /* Lớn hơn */
+    font-weight: 700;
+    color: var(--primary-dark);
+    line-height: 1; /* Căn dòng */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.hospital-slogan {
+    font-style: normal; /* Bỏ italic */
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary-light); /* Slogan màu xanh sáng */
+    text-transform: none; /* Bỏ uppercase */
+    letter-spacing: 0.5px;
+    margin-top: 5px;
+}
+.call-to-action {
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 20px; /* Tăng padding */
+    border-radius: 25px; /* Bo tròn hơn */
+    font-weight: 600; /* Đậm hơn */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s, transform 0.3s;
+}
+.call-to-action:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 102, 194, 0.4);
+}
+
+/* ===== NAVBAR NGHỆ THUẬT HƠN ===== */
+.main-nav-bar {
+    background: var(--primary-color); /* Nền xanh nước biển cho navbar */
+    padding: 0 60px;
+    min-height: 65px; /* Cao hơn một chút */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-links {
+    display: flex;
+    gap: 0;
+}
+.nav-item {
+    position: relative;
+    padding: 0 20px; /* Tăng padding ngang */
+    height: 65px; /* Đảm bảo chiều cao phù hợp */
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: white; /* Chữ trắng trên nền xanh */
+    transition: background 0.3s, color 0.3s, transform 0.3s;
+    text-transform: uppercase; /* Chữ in hoa */
+    letter-spacing: 0.5px;
+    text-align:center;
+}
+.nav-item:hover, .nav-item.active {
+    background: var(--primary-light); /* Nền sáng hơn khi hover/active */
+    color: white;
+    transform: translateY(-2px); /* Hiệu ứng nổi nhẹ */
+    border-bottom: 3px solid var(--accent-color); /* Gạch dưới màu vàng nổi bật */
+}
+.nav-item.active {
+     background: var(--primary-dark); /* Nền đậm hơn khi active */
+     color: var(--accent-color); /* Chữ màu vàng khi active */
+     border-bottom: 3px solid var(--accent-color); /* Vẫn giữ gạch chân vàng */
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.4); /* Viền trắng mờ */
+    border-radius: 20px; /* Bo tròn */
+    overflow: hidden;
+    background: rgba(255,255,255,0.2); /* Nền trắng trong suốt */
+}
+.search-bar input {
+    padding: 8px 12px;
+    border: none;
+    outline: none;
+    width: 180px;
+    background: transparent; /* Nền trong suốt */
+    color: white;
+    &::placeholder {
+        color: rgba(255,255,255,0.7);
+    }
+}
+.search-bar button {
+    background: var(--primary-light); /* Nút tìm kiếm màu xanh sáng */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.search-bar button:hover {
+    background: var(--primary-dark);
+}
+
+/* ===== MAIN CONTENT (Cập nhật màu sắc) ===== */
+.hero-banner {
+    background: linear-gradient(135deg, #e0f2ff, #ffffff 60%);
+    padding: 60px 0;
+}
+.hero-content {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+.banner-info {
+    flex: 1;
+    max-width: 50%;
+}
+.banner-info h1 {
+    font-size: 48px;
+    color: var(--primary-dark);
+    margin-bottom: 15px;
+    line-height: 1.2;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+}
+.banner-info h2 {
+    font-size: 24px;
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 25px;
+}
+.banner-info p {
+    color: var(--text-color);
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+.banner-action-group {
+    display: flex;
+    gap: 15px;
+}
+.action-button {
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.primary-button {
+    background: var(--primary-color);
+    color: white;
+}
+.primary-button:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 6px 15px rgba(10, 102, 194, 0.3);
+}
+.secondary-button {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+.secondary-button:hover {
+    background: var(--primary-color);
+    color: white;
+}
+.banner-image-container {
+    flex: 1;
+    max-width: 50%;
+    position: relative;
+}
+.main-img {
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transition: transform 0.4s ease;
+}
+.main-img:hover {transform: scale(1.02);}
+
+
+/* --- SHORTCUTS/ACTION BOXES --- */
+.shortcuts-v2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 50px 60px; /* Tăng padding */
+    background: var(--bg-light);
+    border-top: 1px solid #e0f2ff;
+}
+.action-card {
+    background: var(--bg-grey); /* Nền xám xanh nhẹ */
+    border-radius: 12px; /* Bo tròn hơn */
+    text-align: center;
+    padding: 30px 25px; /* Tăng padding */
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08); /* Shadow rõ hơn */
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-bottom: 5px solid var(--primary-color); /* Viền dưới đậm hơn */
+}
+.action-card i {
+    font-size: 45px; /* Icon lớn hơn */
+    color: var(--primary-dark); /* Màu xanh đậm */
+    margin-bottom: 15px; /* Khoảng cách lớn hơn */
+}
+.action-card h3 {
+    margin-bottom: 8px;
+    color: var(--primary-dark);
+    font-size: 20px;
+}
+.action-card p {color: #666; font-size: 15px;}
+.action-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+/* --- CHUYÊN KHOA TIÊU BIỂU --- */
+.departments-section {
+    padding: 70px 0; /* Tăng padding */
+    background: var(--bg-light);
+}
+.department-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px; /* Tăng khoảng cách */
+    max-width: 450px; /* Rộng hơn */
+    margin: 0 auto;
+    margin-bottom: 40px; /* Khoảng cách lớn hơn */
+}
+.department-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 25px; /* Tăng padding */
+    border: 1px solid #e0e0e0;
+    border-radius: 10px; /* Bo tròn hơn */
+    font-weight: 500;
+    color: var(--text-color);
+    transition: all 0.3s;
+    font-size: 17px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.department-item:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-light);
+    background: var(--bg-grey);
+    transform: translateX(8px); /* Dịch chuyển rõ hơn */
+    box-shadow: 0 5px 15px rgba(0, 102, 194, 0.2);
+}
+.department-item i {
+    color: var(--primary-light); /* Icon màu xanh sáng */
+    font-size: 18px;
+}
+.view-all-button {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+    background: var(--primary-color); /* Màu xanh nước biển */
+    color: white;
+    padding: 12px 35px; /* Tăng padding */
+    border-radius: 30px; /* Bo tròn hoàn toàn */
+    font-weight: 600;
+    font-size: 17px;
+    transition: background 0.3s, transform 0.3s;
+}
+.view-all-button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 102, 194, 0.4);
+}
+
+/* --- BANNER LỊCH KHÁM THEO YÊU CẦU --- */
+.request-schedule-banner {
+    background: linear-gradient(to right, rgba(10, 102, 194, 0.95), rgba(66, 133, 244, 0.95)), url('https://source.unsplash.com/1600x600/?doctor,consultation');
+    background-size: cover;
+    background-position: center;
+    padding: 60px 0; /* Tăng padding */
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.banner-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 40px; /* Tăng khoảng cách */
+}
+.banner-text-block {
+    text-align: left;
+    flex: 1;
+}
+.banner-text-block h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 44px; /* Lớn hơn */
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    color: var(--accent-color); /* Màu vàng nhấn nổi bật */
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.5); /* Shadow rõ hơn */
+}
+.banner-text-block p {
+    font-size: 19px; /* Lớn hơn */
+    margin-bottom: 25px;
+    opacity: 0.95;
+}
+.schedule-button {
+    background: var(--accent-color); /* Màu vàng nhấn */
+    color: var(--primary-dark); /* Chữ xanh đậm trên nền vàng */
+    padding: 15px 35px; /* Tăng padding */
+    border-radius: 30px; /* Bo tròn hoàn toàn */
+    font-weight: 700;
+    font-size: 19px;
+    transition: background 0.3s, transform 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+.schedule-button:hover {
+    background: #FFC107; /* Vàng nhạt hơn một chút */
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+}
+.banner-image-doctors {
+    flex: 1;
+    max-width: 500px;
+    height: 320px; /* Cao hơn */
+    background: url('https://source.unsplash.com/500x320/?vietnamese-doctor,patient') no-repeat center center;
+    background-size: cover;
+    border-radius: 15px; /* Bo tròn hơn */
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4); /* Shadow mạnh hơn */
+}
+
+/* --- VACCINE/CONSULT SECTION (Cập nhật màu sắc) --- */
+.consult-banner {
+    background: var(--primary-color);
+    color: white;
+    padding: 25px 0; /* Tăng padding */
+    margin-top: 40px; /* Khoảng cách lớn hơn */
+}
+.consult-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 60px; /* Khoảng cách lớn hơn */
+    flex-wrap: wrap;
+    text-align: center;
+}
+.consult-info {
+    text-align: left;
+}
+.consult-info h3 {
+    font-size: 26px; /* Lớn hơn */
+    margin-bottom: 8px;
+    font-weight: 700;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+.consult-info p {
+    font-size: 17px;
+    opacity: 0.95;
+}
+.consult-action .call-button {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--accent-color);
+    color: var(--primary-dark);
+    border: none;
+    padding: 15px 25px; /* Tăng padding */
+    border-radius: 10px; /* Bo tròn hơn */
+    cursor: pointer;
+    font-size: 20px; /* Lớn hơn */
+    font-weight: 700;
+    transition: 0.3s, transform 0.3s;
+}
+.consult-action .call-button:hover {
+    background: #FFC107;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+}
+
+
+/* --- ABOUT SECTION (Giữ nguyên) --- */
+.about-section {
+    padding: 70px 0; /* Tăng padding */
+    background: var(--bg-light);
+}
+.about-content {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+.about-text {
+    flex: 2;
+}
+.about-text p {
+    margin-bottom: 15px;
+    color: var(--text-color);
+    text-align: justify;
+    font-size: 16px;
+}
+.about-stats {
+    flex: 1;
+    background: var(--bg-grey);
+    padding: 30px; /* Tăng padding */
+    border-radius: 12px; /* Bo tròn hơn */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); /* Shadow rõ hơn */
+}
+.stat-item {
+    padding: 18px 0; /* Tăng padding */
+    border-bottom: 1px dashed #ccc;
+}
+.stat-item:last-child {border-bottom: none;}
+.stat-item strong {
+    font-size: 32px; /* Lớn hơn */
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 8px;
+    font-family: 'Oswald', sans-serif;
+}
+.stat-item span {
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+
+/* ===== FOOTER MỚI ===== */
+.main-footer {
+    background: var(--primary-dark); /* Nền xanh nước biển rất đậm */
+    color: white;
+    padding: 40px 60px 20px; /* Tăng padding */
+    font-size: 15px;
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr 1fr; /* Tăng kích thước cột đầu */
+    gap: 50px; /* Tăng khoảng cách */
+}
+.footer-logo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.footer-logo-info .logo-text {
+    font-size: 22px; /* Lớn hơn */
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px; /* Khoảng cách lớn hơn */
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+}
+.footer-logo-info .logo-text img {
+    width: 45px; /* Lớn hơn */
+    height: 45px; /* Lớn hơn */
+    border-radius: 50%;
+    border: 3px solid white;
+}
+.footer-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px; /* Tăng khoảng cách */
+    margin-bottom: 12px;
+}
+.footer-contact-item i {
+    color: var(--accent-color); /* Icon màu vàng */
+    margin-top: 4px;
+    font-size: 18px;
+}
+.contact-detail strong {display: block; font-size: 16px;}
+.contact-detail a {color: white; transition: color 0.3s;}
+.contact-detail a:hover {color: var(--accent-color);} /* Hover màu vàng */
+.working-schedule {margin-top: 20px;}
+.working-schedule strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--accent-color); /* Màu vàng */
+    font-size: 16px;
+}
+.working-schedule ul {list-style: none; margin-left: 0;} /* Bỏ list-style disc */
+.working-schedule li {
+    margin-bottom: 5px;
+    position: relative;
+    padding-left: 15px;
+}
+.working-schedule li::before {
+    content: "\2022"; /* Dấu chấm bullet tùy chỉnh */
+    color: var(--accent-color);
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+/* Footer Actions */
+.footer-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 18px; /* Tăng khoảng cách */
+}
+.action-link-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--primary-color); /* Nền xanh nước biển */
+    padding: 15px 20px; /* Tăng padding */
+    border-radius: 8px; /* Bo tròn hơn */
+    color: white;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.3s;
+    font-size: 16px;
+}
+.action-link-footer i {
+    color: var(--accent-color); /* Icon màu vàng */
+    font-size: 18px;
+}
+.action-link-footer:hover {
+    background: var(--primary-light);
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0, 102, 194, 0.3);
+}
+
+/* Footer Menu */
+.footer-menu h4 {
+    color: var(--accent-color); /* Màu vàng */
+    margin-bottom: 25px; /* Khoảng cách lớn hơn */
+    font-size: 18px; /* Lớn hơn */
+    text-transform: uppercase;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.8px;
+}
+.footer-menu ul a {
+    display: block;
+    padding: 7px 0; /* Tăng padding */
+    transition: color 0.3s;
+    font-size: 15px;
+}
+.footer-menu ul a:hover {
+    color: var(--accent-color); /* Hover màu vàng */
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px; /* Khoảng cách lớn hơn */
+    padding-top: 25px;
+    border-top: 1px solid rgba(255,255,255,0.25); /* Viền đậm hơn */
+    flex-wrap: wrap; /* Đảm bảo responsive */
+    gap: 15px; /* Khoảng cách giữa các phần tử */
+}
+.social-links a {
+    font-size: 22px; /* Icon lớn hơn */
+    margin-right: 18px;
+    transition: color 0.3s;
+}
+.social-links a:hover {
+    color: var(--accent-color); /* Hover màu vàng */
+}
+.dmca-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dmca-badge img {
+    height: 30px; /* Lớn hơn */
+}
+.footer-bottom p {
+    font-size: 14px;
+}
+
+/* Floating Actions */
+.floating-actions {
+    position: fixed;
+    right: 25px; /* Dịch sang phải hơn */
+    bottom: 25px; /* Dịch lên trên hơn */
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Khoảng cách lớn hơn */
+}
+.floating-btn {
+ width: 55px; /* Lớn hơn */
+ height: 55px; /* Lớn hơn */
+ background: var(--primary-color);
+color: white;
+ border-radius: 50%;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ font-size: 24px; /* Icon lớn hơn */
+ box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+ cursor: pointer;
+transition: background 0.3s, transform 0.3s;
+}
+.floating-btn:hover {
+background: var(--primary-dark);
+ transform: translateY(-3px);
+ box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+.floating-btn.chat {
+ background: var(--accent-color); /* Nút chat màu vàng */
+ color: var(--primary-dark); /* Chữ xanh đậm */
+}
+.floating-btn.chat:hover {
+ background: #FFC107;
+ transform: translateY(-3px);
+ box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+}
+
+/* 1. Style cho Nút Zalo (Thay thế biểu tượng Phone bằng logo Zalo) */
+.floating-zalo-btn {
+ background: #0087FF; /* Màu xanh Zalo */
+ color: white;
+}
+.floating-zalo-btn:hover {
+background: #007acc; /* Xanh đậm hơn khi hover */
+ transform: scale(1.1);
+}
+/* Style cho hình ảnh Zalo logo bên trong nút nổi */
+.floating-zalo-btn .zalo-icon-floating-main {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+    border-radius: 5px;
+}
+.zalo-icon {
+  width: 35px;
+  height: 35px;
+  object-fit: contain;
+}
+
+/* 2. Style cho Nút Chat Toggle (Sử dụng biểu tượng chat chung) */
+.chat-toggle-button {
+ background: var(--accent-color); /* Màu vàng nhấn cho nút chat toggle */
+ color: var(--primary-dark);
+}
+.chat-toggle-button:hover {
+     background: #FFC107;
+transform: scale(1.1);
+}
+.chat-toggle-button i {
+    font-size: 26px; /* Icon chat to hơn */
+}
+
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .top-bar, .main-nav-bar {padding: 10px 30px;}
+    .logo-title {font-size: 24px;}
+    .hospital-slogan {font-size: 14px;}
+    .nav-item {padding: 0 15px; height: 60px;}
+    .hero-content, .about-content, .banner-content {flex-direction: column; text-align: center;}
+    .banner-info, .banner-image-container, .banner-text-block, .banner-image-doctors {max-width: 100%;}
+    .banner-text-block {text-align: center;}
+    .banner-action-group {justify-content: center;}
+    .shortcuts-v2 {padding: 40px 30px;}
+    .consult-container {text-align: center; gap: 30px;}
+    .consult-info {text-align: center;}
+    .footer-grid {grid-template-columns: 1fr 1fr; gap: 30px;}
+    .request-schedule-banner .banner-image-doctors {margin-top: 30px;}
+}
+@media (max-width: 768px) {
+    .top-bar {flex-direction: column; gap: 10px; padding: 10px 20px;}
+    .call-to-action {display: none;}
+    .main-nav-bar {flex-direction: column; padding: 10px 20px; min-height: auto;}
+    .nav-links {flex-wrap: wrap; justify-content: center; gap: 5px; width: 100%;}
+    .nav-item {padding: 8px 10px; height: auto; font-size: 14px;}
+    .search-bar {margin-top: 15px; width: 100%;}
+    .search-bar input {width: calc(100% - 60px);}
+    .section-title {font-size: 28px; padding-top: 30px;}
+    .section-subtitle {font-size: 16px;}
+    .hero-banner {padding: 40px 0;}
+    .banner-info h1 {font-size: 36px;}
+    .banner-info h2 {font-size: 20px;}
+    .action-button {font-size: 15px; padding: 10px 20px;}
+    .shortcuts-v2 {grid-template-columns: 1fr; padding: 30px 20px;}
+    .departments-section {padding: 50px 0;}
+    .department-list {max-width: 100%;}
+    .department-item {font-size: 15px; padding: 15px 20px;}
+    .request-schedule-banner {padding: 40px 0;}
+    .banner-text-block h2 {font-size: 32px;}
+    .banner-text-block p {font-size: 16px;}
+    .schedule-button {font-size: 16px; padding: 12px 25px;}
+    .consult-banner {margin-top: 30px;}
+    .consult-info h3 {font-size: 22px;}
+    .consult-action .call-button {font-size: 18px; padding: 12px 20px;}
+    .about-section {padding: 50px 0;}
+    .about-content {gap: 30px;}
+    .about-stats {padding: 20px;}
+    .stat-item strong {font-size: 28px;}
+    .main-footer {padding: 30px 20px;}
+    .footer-grid {grid-template-columns: 1fr; gap: 25px;}
+    .footer-bottom {flex-direction: column; text-align: center; gap: 15px;}
+    .social-links {width: 100%; text-align: center;}
+    .dmca-badge {width: 100%; justify-content: center;}
+    .floating-actions {right: 15px; bottom: 15px; gap: 8px;}
+    .floating-btn {width: 45px; height: 45px; font-size: 20px;}
+}
+
+/* === CHATBOX === */
+.chatbox {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 420px;
+  height: 550px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  z-index: 2000;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+  pointer-events: none;
+  transition: all 0.35s ease;
+}
+
+/* Khi bật chatbox */
+.chatbox.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* HEADER */
+.chat-header {
+  background: #007acc;
+  color: white;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+.chat-header .close-chat {
+  font-size: 22px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.chat-header .close-chat:hover {
+  color: #ffeb3b;
+}
+
+/* NỘI DUNG CHAT */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  font-size: 15px;
+  line-height: 1.6;
+  background: #fafafa;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Tin nhắn */
+.msg {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  display: inline-block;
+  max-width: 85%;
+  word-wrap: break-word;
+}
+
+.msg.bot {
+  background: #e8f1fa;
+  color: #004b7c;
+  align-self: flex-start;
+  text-align: left;
+  white-space: normal; /* Cho phép xuống dòng tự nhiên */
+  line-height: 1.6;
+}
+
+.msg.user {
+  background: #007acc;
+  color: white;
+  align-self: flex-end;
+  text-align: right;
+}
+
+/* Ô nhập */
+.chat-input {
+  display: flex;
+  padding: 12px;
+  gap: 8px;
+  background: #f9f9f9;
+}
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.chat-input button {
+  background: #007acc;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.chat-input button:hover {
+  background: #005fa3;
+}
+
+/* Footer liên hệ */
+.chat-contact {
+  padding: 10px;
+  font-size: 13px;
+  text-align: center;
+  background: #fafafa;
+  border-top: 1px solid #ddd;
+}
+.chat-contact a {
+  color: #007acc;
+  text-decoration: none;
+  font-weight: 500;
+}
+.chat-contact a:hover {
+  text-decoration: underline;
+}
+
+/* Nút nổi */
+.floating-button-group {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.floating-phone-btn,
+.chat-toggle-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.floating-phone-btn {
+  background: #007acc;
+  color: #fff;
+}
+.floating-phone-btn:hover {
+  transform: scale(1.1);
+}
+.chat-toggle-button {
+  background: #ffc107;
+  color: #005fa3;
+}
+.chat-toggle-button:hover {
+  transform: scale(1.1);
+}
+.ai-message {
+  background: #eef7ff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 6px 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: #222;
+}
+
+.user-message {
+  background: #dfffe0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 6px 0;
+  text-align: right;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<header class="main-header">
+    <div class="top-bar">
+        <div class="logo">
+            <img src="logo.jpg" alt="DHST Healthcare Logo"> 
+            <div class="logo-title-group">
+                <div class="logo-title">DHST Healthcare</div>
+                <div class="hospital-slogan">Y Học Tiên Tiến - Chăm Sóc Tận Tâm</div>
+            </div>
+        </div>
+        <a href="tel:19001234" class="call-to-action">
+            <i class="fas fa-phone-alt"></i>
+            Tổng đài Hỗ trợ: 1900.1234
+        </a>
+    </div>
+
+    <nav class="main-nav-bar">
+        <ul class="nav-links">
+             <li><a href="index.html" class="nav-item active">Trang chủ</a></li>
+            <li><a href="tin-tuc.html" class="nav-item">Tin tức & Bài viết</a></li>
+            <li><a href="dich-vu.html" class="nav-item">Dịch vụ</a></li>
+            <li><a href="bac-si.html" class="nav-item">Đội ngũ bác sĩ</a></li>
+            <li><a href="thiet-bi.html" class="nav-item">Thiết bị</a></li>
+            <li><a href="dat-lich.html" class="nav-item">Đặt lịch khám</a></li>
+            <li><a href="tra-cuu.html" class="nav-item">Tra cứu kết quả</a></li>
+        </ul>
+      
+        
+    </nav>
+</header>
+
+<main id="main-content">
+    <section class="hero-banner">
+        <div class="container hero-content">
+            <div class="banner-info">
+                <h1>BỆNH VIỆN ĐA KHOA DHST</h1>
+                <h2>Y học tiên tiến - Chăm sóc tận tâm</h2>
+                <p>DHST Healthcare là bệnh viện đa khoa hàng đầu, ứng dụng công nghệ hiện đại và quy tụ đội ngũ chuyên gia, bác sĩ giàu kinh nghiệm, cam kết mang lại dịch vụ chăm sóc sức khỏe chất lượng cao nhất cho cộng đồng.</p>
+                <div class="banner-action-group">
+                    <a href="dat-lich.html" class="action-button primary-button">
+                        <i class="fas fa-calendar-alt"></i> Đặt lịch khám ngay
+                    </a>
+                    <a href="dich-vu.html" class="action-button secondary-button">
+                        <i class="fas fa-notes-medical"></i> Xem dịch vụ
+                    </a>
+                </div>
+            </div>
+            <div class="banner-image-container">
+                <img src="bia.jpg" class="main-img" alt="Bệnh viện DHST Healthcare">
+            </div>
+        </div>
+    </section>
+
+    <section class="shortcuts-v2">
+        <a href="https://zalo.me/0382773307" class="action-box-link" target="_blank">
+            <div class="action-card">
+                <i class="fab fa-whatsapp"></i>
+                <h3>Chat Zalo</h3>
+                <p>Tư vấn nhanh chóng qua Zalo 24/7</p>
+            </div>
+        </a>
+        <a href="dat-lich.html" class="action-box-link">
+            <div class="action-card">
+               <i class="fas fa-calendar-check"></i>
+                <h3>Đặt lịch khám</h3>
+                <p>Đặt lịch khám online chủ động thời gian</p>
+            </div>
+        </a>
+        <a href="hoi-dap.html" class="action-box-link">
+            <div class="action-card">
+                <i class="fas fa-comments"></i>
+                <h3>Hỏi đáp chuyên gia</h3>
+                <p>Giải đáp thắc mắc về sức khỏe miễn phí</p>
+            </div>
+        </a>
+        <a href="tra-cuu.html" class="action-box-link">
+            <div class="action-card">
+                <i class="fas fa-poll"></i>
+                <h3>Tra cứu kết quả</h3>
+                <p>Tra cứu kết quả xét nghiệm, chẩn đoán</p>
+            </div>
+        </a>
+    </section>
+
+    
+        
+
+    <section class="request-schedule-banner">
+        <div class="container banner-content">
+             <div class="banner-image-doctors">
+                <img src="bs.png">
+                 </div>
+            <div class="banner-text-block">
+                <h2>LỊCH KHÁM, TƯ VẤN THEO YÊU CẦU</h2>
+                <p>Dịch vụ khám ngoài giờ, khám cuối tuần, và tư vấn trực tuyến với đội ngũ chuyên gia theo yêu cầu của quý khách. Chủ động về thời gian, an tâm về chất lượng.</p>
+                <a href="dat-lich.html" class="schedule-button">
+                    <i class="fas fa-calendar-alt"></i> Xem lịch khám
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="consult-banner">
+        <div class="container consult-container">
+            <div class="consult-info">
+                <h3>ĐƠN VỊ TƯ VẤN VÀ TIÊM CHỦNG VẮC XIN</h3>
+                <p>Thương hiệu DHST - An toàn mọi đối tượng - An tâm với bệnh nền</p>
+            </div>
+            <div class="consult-action">
+                <a href="https://zalo.me/0382773307" class="call-button" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                    <div>
+                        <span>CHAT VỚI CHUYÊN VIÊN</span><br>
+                        <strong>Chat Zalo Ngay</strong>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title">CHĂM SÓC SỨC KHỎE TOÀN DIỆN TẠI DHST</h2>
+            <p class="section-subtitle">Với hơn 20 năm kinh nghiệm, chúng tôi cam kết mang đến dịch vụ y tế chuẩn mực quốc tế.</p>
+            <div class="about-content">
+                <div class="about-text">
+                    <p><strong>Bệnh viện Đa khoa DHST Healthcare</strong> được thành lập với mục tiêu trở thành một trong những cơ sở y tế hàng đầu Việt Nam, cung cấp dịch vụ khám chữa bệnh chất lượng cao, tiếp cận các phương pháp điều trị tiên tiến nhất thế giới. Chúng tôi tự hào với cơ sở vật chất hiện đại, được trang bị hệ thống máy móc chẩn đoán hình ảnh và xét nghiệm đồng bộ, tiên tiến.</p>
+                    <p>Đội ngũ y bác sĩ của DHST là những chuyên gia đầu ngành, tốt nghiệp từ các trường đại học y khoa danh tiếng trong và ngoài nước, luôn tận tâm, trách nhiệm, đặt đạo đức nghề nghiệp và lợi ích của người bệnh lên hàng đầu. Các chuyên khoa trọng yếu bao gồm: Tim mạch, Tiêu hóa, Thần kinh, Cơ xương khớp, Ung bướu và Sản phụ khoa.</p>
+                    <p>Ngoài ra, DHST còn chú trọng phát triển mảng <a href="#" style="color:var(--primary-color); font-weight: 600;">**Y học dự phòng**</a>, đặc biệt là các chương trình khám sức khỏe tổng quát, tầm soát ung thư sớm và tiêm chủng vắc xin trọn đời, giúp người dân chủ động bảo vệ sức khỏe, phát hiện và điều trị bệnh kịp thời.</p>
+                    <p>DHST cam kết không ngừng nâng cao chất lượng dịch vụ, ứng dụng công nghệ thông tin vào quản lý bệnh viện để mang lại trải nghiệm khám chữa bệnh nhanh chóng, tiện lợi và hiệu quả nhất cho mọi khách hàng. Với tầm nhìn trở thành biểu tượng của sự tin cậy và chất lượng trong ngành y tế, DHST luôn nỗ lực vì sức khỏe cộng đồng.</p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <strong>20+</strong>
+                        <span>Năm kinh nghiệm</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>500+</strong>
+                        <span>Giường bệnh tiêu chuẩn quốc tế</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>15+</strong>
+                        <span>Chuyên khoa trọng điểm</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>98%</strong>
+                        <span>Bệnh nhân hài lòng</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer">
+    <div class="container footer-grid">
+        <div class="footer-logo-info">
+            <div class="logo-text">
+                <img src="logo.jpg" alt="DHST Logo">
+                <span>BỆNH VIỆN DHST HEALTHCARE</span>
+            </div>
+            <div class="footer-contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <div class="contact-detail">
+                    <strong>Địa chỉ:</strong>
+                    Trường đại học Công nghệ thông tin và Truyền thông
+                </div>
+            </div>
+            <div class="footer-contact-item">
+                <i class="fas fa-phone-alt"></i>
+                <div class="contact-detail">
+                    <strong>chat zalo :</strong>
+                     <a href="https://zalo.me/0382773307" class="action-box-link" target="_blank">0382773307</a>
+                </div>
+            </div>
+            <div class="footer-contact-item">
+                <i class="fas fa-mobile-alt"></i>
+                <div class="contact-detail">
+                    <strong>Hotline:</strong>
+                    <a href="tel:0969899999">096.989.9999</a>
+                </div>
+            </div>
+            
+            <div class="working-schedule">
+                <strong>Lịch làm việc:</strong>
+                <ul>
+                    <li>Thứ 2 - Thứ 6: 06:00 - 20:00 (Khám theo yêu cầu)</li>
+                    <li>Thứ 7 - Chủ nhật: 06:30 - 16:30 (Khám theo yêu cầu)</li>
+                    <li>Khám thường: Sáng: 07:00 - 12:00 | Chiều: 13:30 - 16:30</li>
+                </ul>
+            </div>
+            
+            <p style="margin-top: 20px;">Chịu trách nhiệm chính: TS.BS. Chu Bá Tâm - Giám đốc bệnh viện</p>
+        </div>
+
+        <div class="footer-actions">
+            <a href="https://zalo.me/0382773307" class="action-link-footer" target="_blank">
+                Chat tư vấn qua zalo <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="dat-lich.html" class="action-link-footer">
+                Đặt lịch khám <i class="fas fa-arrow-right"></i>
+            </a>
+           
+            <a href="tra-cuu.html" class="action-link-footer">
+                Tra cứu kết quả xét nghiệm <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="footer-menu">
+            <h4>VỀ DHST HEALTHCARE</h4>
+            <ul>
+               
+                <li><a href="dich-vu.html">Đơn vị chuyên khoa</a></li>
+                <li><a href="bac-si.html">Đội ngũ bác sĩ</a></li>
+                <li><a href="tin-tuc.html">Tin hoạt động bệnh viện</a></li>
+                <li><a href="thiet-bi.html">Tin mời thầu</a></li>
+                <li><a href="lien-he.html">Liên hệ & Hỗ trợ</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="social-links">
+            <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
+        </div>
+        <div class="dmca-badge">
+            <img src="dg1.png" alt="Đã thông báo Bộ Công Thương">
+            <img src="dg2.png" alt="DMCA Protected">
+        </div>
+        <p>© 2025 DHST Healthcare. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<!-- Chatbox -->
+  <div class="floating-button-group">
+    <a href="https://zalo.me/0382773307" class="floating-btn floating-zalo-btn" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo" class="zalo-icon">
+    </a>
+    
+    <div class="chat-toggle-button" id="chatToggleButton">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+</div>
+
+  <div class="chatbox" id="chatbox">
+    <div class="chat-header">
+      <div class="title">🤖 Tư vấn trực tuyến</div>
+      <div class="close-chat" id="closeChatBtn" style="cursor:pointer;">&times;</div>
+    </div>
+    <div class="chat-messages" id="messages">
+      <div class="msg bot"><strong>Hệ thống:</strong> Xin chào! Tôi có thể giúp gì cho bạn?</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Nhập tin nhắn..." />
+      <button id="sendBtn">Gửi</button>
+    </div>
+    <div class="chat-contact">
+      📞 <a href="tel:0868686868">Hotline</a> | 
+      💬 <a href="https://zalo.me/0868686868" target="_blank">Zalo</a> | 
+      ✉️ <a href="mailto:info@dhts.com">Email</a>
+    </div>
+  </div>
+
+<script>
+  const chatToggleButton = document.getElementById("chatToggleButton");
+  const chatbox = document.getElementById("chatbox");
+  const closeChatBtn = document.getElementById("closeChatBtn");
+  const messages = document.getElementById("messages");
+  const userInput = document.getElementById("userInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  // Bật / tắt chatbox
+  chatToggleButton.addEventListener("click", () => {
+    chatbox.classList.add("active");
+  });
+
+  closeChatBtn.addEventListener("click", () => {
+    chatbox.classList.remove("active");
+  });
+
+  // Thêm tin nhắn (giữ HTML xuống dòng)
+  function appendMessage(text, who = "bot") {
+    const msg = document.createElement("div");
+    msg.className = "msg " + who;
+    msg.innerHTML = `<strong>${who === "user" ? "Bạn" : "AI"}:</strong> ${text}`;
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  // Gửi tin nhắn
+  async function sendMessage() {
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    appendMessage(message, "user");
+    userInput.value = "";
+
+    try {
+      const res = await fetch("http://localhost:3000/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+      const data = await res.json();
+      appendMessage(data.reply || "Xin lỗi, không có phản hồi.");
+    } catch (err) {
+      appendMessage("⚠️ Không thể kết nối tới máy chủ.", "bot");
+      console.error(err);
+    }
+  }
+
+  sendBtn.addEventListener("click", sendMessage);
+  userInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý bài viết - DHST Hospital</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+  :root{
+    --primary:#2563eb; --accent:#38bdf8; --bg:#f9fafb; --card:#fff;
+    --text:#1e293b; --muted:#6b7280; --radius:14px; --shadow:0 10px 30px rgba(0,0,0,0.08);
+  }
+  *{box-sizing:border-box;font-family:"Inter",sans-serif;margin:0;padding:0;}
+  body{display:flex;min-height:100vh;background:var(--bg);color:var(--text);}
+
+  /* Sidebar */
+  .sidebar{
+    width:240px;background:#1e293b;color:#fff;display:flex;flex-direction:column;
+    padding:24px 16px;box-shadow:2px 0 8px rgba(0,0,0,0.1);
+  }
+  .brand{font-size:22px;font-weight:700;margin-bottom:30px;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;}
+  .nav a{
+    display:flex;align-items:center;gap:10px;color:#cbd5e1;
+    text-decoration:none;padding:12px 14px;border-radius:10px;transition:all .25s;
+  }
+
+.submenu-group { display:flex; flex-direction:column; }
+.submenu { display:none; flex-direction:column; margin-left:24px; margin-top:4px; }
+.submenu a {
+  font-size:14px; color:#cbd5e1; padding:10px 12px;
+  border-radius:8px; transition:all .25s;
+}
+.submenu a:hover { background:rgba(255,255,255,0.1); color:#fff; transform:translateX(4px); }
+.submenu.show { display:flex; }
+
+
+  .nav a:hover,.nav a.active{background:var(--primary);color:#fff;transform:translateX(4px);}
+  .nav a i{width:20px;text-align:center;}
+
+  /* Main */
+  .main{flex:1;padding:32px;overflow:auto;}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
+  header h1{font-size:26px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:10px;}
+  header .small{color:var(--muted);}
+
+  /* Card */
+  .card{
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:26px;margin-bottom:30px;animation:fadeIn .4s ease;
+  }
+  .card h2{font-size:18px;margin-bottom:18px;display:flex;align-items:center;gap:10px;color:var(--text);}
+  .card h2 i{color:var(--primary);}
+
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+  /* Form */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  label{font-weight:600;font-size:14px;margin-bottom:6px;display:block;color:var(--text);}
+  input,textarea,select{
+    width:100%;padding:12px 14px;border:1px solid #e2e8f0;border-radius:10px;
+    font-size:14px;transition:border .2s,box-shadow .2s;
+  }
+  input:focus,textarea:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.15);outline:none;}
+  .btn{
+    background:var(--primary);color:#fff;padding:10px 16px;border:none;border-radius:10px;font-weight:600;cursor:pointer;transition:all .25s;
+  }
+  .btn:hover{opacity:.9;transform:translateY(-2px);}
+  .btn.secondary{background:#94a3b8;}
+  .btn.danger{background:#ef4444;}
+
+  /* Table */
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;margin-top:10px;background:transparent;}
+  thead th{
+    background:linear-gradient(90deg,var(--primary),#1e40af);color:#fff;padding:12px 16px;text-align:left;font-weight:600;
+  }
+  tbody td{padding:12px 16px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+  tr:hover td{background:#f8fafc;}
+  img.thumb{width:80px;height:50px;object-fit:cover;border-radius:6px;border:1px solid #eef2f7;}
+  .pill{display:inline-block;padding:6px 14px;border-radius:999px;color:#fff;font-weight:600;font-size:13px;cursor:pointer;}
+  .pill.published{background:#16a34a;}
+  .pill.draft{background:#6b7280;}
+
+  /* Toast */
+  .toast-wrap{position:fixed;right:24px;top:24px;z-index:90;display:flex;flex-direction:column;gap:10px;}
+  .toast{background:#fff;padding:12px 16px;border-left:6px solid;border-radius:12px;box-shadow:var(--shadow);animation:fadeIn .4s ease;}
+  .toast.success{border-color:#16a34a;}
+  .toast.error{border-color:#ef4444;}
+
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:80;}
+  .overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:16px;padding:22px;min-width:320px;max-width:760px;box-shadow:0 20px 45px rgba(0,0,0,0.2);}
+  .modal h3{margin-bottom:10px;font-size:18px;display:flex;align-items:center;gap:8px;color:var(--text);}
+  .modal p{font-size:14px;color:var(--muted);margin-bottom:10px;}
+  .modal .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;}
+
+  .confirm-icon{width:52px;height:52px;border-radius:50%;background:#fef2f2;color:#ef4444;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 14px;}
+
+  @media (max-width:900px){.grid{grid-template-columns:1fr;}.sidebar{display:none;}.main{padding:20px;}}
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><i class="fas fa-hospital"></i> DHST Hospital</div>
+    <nav class="nav">
+  <a href="manage.account.html"><i class="fas fa-user-cog"></i> Quản lý tài khoản</a>
+  <div class="submenu-group">
+  <a href="#" id="toggleNhanVien"><i class="fas fa-user-friends"></i> Quản lý nhân viên 
+    <i class="fas fa-chevron-down" style="margin-left:auto;font-size:12px;"></i>
+  </a>
+  <div id="submenuNhanVien" class="submenu">
+    <a href="manage.bacsi.html"><i class="fas fa-user-md"></i> Quản lý bác sĩ</a>
+    <a href="manage.letan.html"><i class="fas fa-concierge-bell"></i> Quản lý lễ tân</a>
+  </div>
+</div>
+
+<!-- ✅ Mục riêng: Quản lý lịch làm việc -->
+    <a href="manage.lichlamviec.html"><i class="fas fa-calendar-alt"></i> Quản lý lịch làm việc</a>
+
+    <a class="active" href="manage.news.html"><i class="fas fa-newspaper"></i> Quản lý bài viết</a>
+</nav>
+  </aside>
+
+  <main class="main">
+    <header>
+      <h1><i class="fas fa-newspaper"></i> Quản lý bài viết</h1>
+      <div class="small">Xin chào, Admin 👋</div>
+    </header>
+
+    <!-- Controls -->
+    <section class="card" style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+      <div style="display:flex;gap:12px;align-items:center;">
+        <button id="addBtn" class="btn"><i class="fas fa-plus-circle"></i> Thêm bài viết</button>
+        <select id="filterCategory" style="width:220px;padding:10px;border-radius:8px;border:1px solid #e2e8f0;">
+          <option value="">Tất cả danh mục</option>
+          <option value="Tin hoạt động">Tin hoạt động</option>
+          <option value="Kiến thức Y khoa">Kiến thức Y khoa</option>
+          <option value="Lời khuyên Sức khỏe">Lời khuyên Sức khỏe</option>
+          <option value="Nghiên cứu & Đổi mới">Nghiên cứu & Đổi mới</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <input id="searchInput" placeholder="Tìm theo tiêu đề..." style="padding:10px;border-radius:8px;border:1px solid #e2e8f0;">
+        <button id="searchBtn" class="btn secondary">Tìm</button>
+      </div>
+    </section>
+
+    <!-- List -->
+    <section class="card">
+      <h2><i class="fas fa-list"></i> Danh sách bài viết</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:90px">Ảnh</th>
+              <th>Tiêu đề</th>
+              <th style="width:160px">Danh mục</th>
+              <th style="width:140px">Tác giả</th>
+              <th style="width:120px">Trạng thái</th>
+              <th style="width:160px">Ngày tạo</th>
+              <th style="width:150px">Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="newsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Add/Edit -->
+  <div id="modalOverlay" class="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle"><i class="fas fa-pen"></i> Thêm bài viết</h3>
+      <form id="newsForm">
+        <input type="hidden" id="newsId" value="">
+        <div class="grid" style="margin-top:8px;">
+          <div>
+            <label>Tiêu đề</label>
+            <input id="title" required placeholder="Tiêu đề bài viết">
+          </div>
+          <div>
+            <label>Danh mục</label>
+            <select id="categorySelect">
+              <option value="Tin hoạt động">Tin hoạt động</option>
+              <option value="Kiến thức Y khoa">Kiến thức Y khoa</option>
+              <option value="Lời khuyên Sức khỏe">Lời khuyên Sức khỏe</option>
+              <option value="Nghiên cứu & Đổi mới">Nghiên cứu & Đổi mới</option>
+            </select>
+          </div>
+          <div style="grid-column:1/3;">
+            <label>Tóm tắt</label>
+            <textarea id="summary" rows="2" placeholder="Mô tả ngắn..."></textarea>
+          </div>
+          <div style="grid-column:1/3;">
+            <label>Nội dung</label>
+            <textarea id="content" rows="6" placeholder="Nội dung chi tiết..."></textarea>
+          </div>
+          <div>
+            <label>Tác giả</label>
+            <input id="author" placeholder="Tên tác giả">
+          </div>
+          <div>
+            <label>Ảnh đại diện</label>
+            <input type="file" id="imageInput" accept="image/*">
+            <img id="imgPreview" class="thumb" style="margin-top:8px;display:none;">
+          </div>
+        </div>
+
+        <div class="modal-actions" style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px;">
+          <button type="button" id="cancelModal" class="btn secondary">Hủy</button>
+          <button type="submit" class="btn"><i class="fas fa-save"></i> Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Confirm -->
+  <div id="confirmOverlay" class="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="confirm-icon"><i class="fas fa-triangle-exclamation"></i></div>
+      <h3>Xác nhận</h3>
+      <p id="confirmText">Bạn có chắc muốn xóa bài viết này?</p>
+      <div class="modal .actions" style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px;">
+        <button id="confirmCancel" class="btn secondary">Hủy</button>
+        <button id="confirmOk" class="btn danger">Xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toasts" class="toast-wrap"></div>
+
+<script>
+/* ---------------- Configuration ---------------- */
+const API_BASE = "http://localhost:3000";
+const API_NEWS = API_BASE + "/api/news";
+/* ------------------------------------------------ */
+
+const newsTbody = document.getElementById("newsTbody");
+const addBtn = document.getElementById("addBtn");
+const modalOverlay = document.getElementById("modalOverlay");
+const confirmOverlay = document.getElementById("confirmOverlay");
+const newsForm = document.getElementById("newsForm");
+const modalTitle = document.getElementById("modalTitle");
+const cancelModal = document.getElementById("cancelModal");
+const imgPreview = document.getElementById("imgPreview");
+const imageInput = document.getElementById("imageInput");
+const newsIdEl = document.getElementById("newsId");
+const filterCategory = document.getElementById("filterCategory");
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
+
+let confirmCallback = null;
+let currentEditId = null;
+let latestNews = []; // cache
+
+/* Toast */
+function showToast(msg, type = "success", ms = 3000){
+  const t = document.createElement("div");
+  t.className = "toast " + (type==="success"?"success":"error");
+  t.innerHTML = `<strong>${type==="success"?"Thành công":"Lỗi"}</strong><div style="font-size:13px;margin-top:6px;">${msg}</div>`;
+  document.getElementById("toasts").appendChild(t);
+  setTimeout(()=> t.style.opacity = 0, ms - 600);
+  setTimeout(()=> t.remove(), ms);
+}
+
+/* Open / Close modals */
+function openModal(edit=false){
+  modalOverlay.classList.add("show");
+  modalOverlay.setAttribute("aria-hidden", "false");
+  if(!edit){
+    modalTitle.innerHTML = '<i class="fas fa-pen"></i> Thêm bài viết';
+    newsForm.reset();
+    imgPreview.style.display = "none";
+    newsIdEl.value = "";
+    currentEditId = null;
+  } else {
+    modalTitle.innerHTML = '<i class="fas fa-pen"></i> Chỉnh sửa bài viết';
+  }
+}
+function closeModal(){
+  modalOverlay.classList.remove("show");
+  modalOverlay.setAttribute("aria-hidden", "true");
+}
+function openConfirm(text, cb){
+  document.getElementById("confirmText").textContent = text;
+  confirmOverlay.classList.add("show");
+  confirmOverlay.setAttribute("aria-hidden","false");
+  confirmCallback = cb;
+}
+function closeConfirm(){
+  confirmOverlay.classList.remove("show");
+  confirmOverlay.setAttribute("aria-hidden","true");
+  confirmCallback = null;
+}
+
+/* Preview image */
+imageInput.addEventListener("change", ()=>{
+  const f = imageInput.files[0];
+  if(f){ imgPreview.src = URL.createObjectURL(f); imgPreview.style.display = "inline-block"; }
+  else { imgPreview.style.display = "none"; imgPreview.src = ""; }
+});
+
+/* Cancel modal */
+cancelModal.onclick = closeModal;
+document.getElementById("confirmCancel").onclick = () => { closeConfirm(); };
+document.getElementById("confirmOk").onclick = async () => {
+  if(confirmCallback) { await confirmCallback(); closeConfirm(); }
+};
+
+/* Fetch & render news */
+async function loadNews(){
+  newsTbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted)">Đang tải...</td></tr>`;
+  try{
+    const res = await fetch(API_NEWS);
+    const data = await res.json();
+    latestNews = Array.isArray(data) ? data : [];
+    renderNews(latestNews);
+  }catch(err){
+    console.error(err);
+    newsTbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#ef4444">Lỗi tải dữ liệu</td></tr>`;
+  }
+}
+
+function renderNews(list){
+  if(!list.length){
+    newsTbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted)">Chưa có bài viết</td></tr>`;
+    return;
+  }
+  newsTbody.innerHTML = "";
+  list.forEach(n=>{
+    const id = n.id || n._id || n.ID || "";
+    let imgUrl = "";
+if (n.image) {
+  if (n.image.startsWith("data:image")) {
+    imgUrl = n.image; // ảnh base64
+  } else if (n.image.startsWith("http")) {
+    imgUrl = n.image; // ảnh URL đầy đủ
+  } else {
+    imgUrl = API_BASE + "/" + n.image.replace(/^\/+/, ""); // ảnh dạng đường dẫn tĩnh từ server
+  }
+}
+
+    const status = (n.status || "draft").toLowerCase();
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><img src="${imgUrl || ''}" class="thumb" onerror="this.style.opacity=.4;this.src='';"></td>
+      <td>${escapeHtml(n.title || "-")}</td>
+      <td>${escapeHtml(n.category || "-")}</td>
+      <td>${escapeHtml(n.author || "-")}</td>
+      <td><span class="pill ${status==='published'?'published':'draft'}" data-id="${id}" data-status="${status}">${status==='published'?'Đã xuất bản':'Nháp'}</span></td>
+      <td>${formatDate(n.created_at || n.createdAt || n.created || "")}</td>
+      <td>
+        <button class="btn secondary" data-id="${id}" data-action="edit"><i class="fas fa-pen"></i></button>
+        <button class="btn danger" data-id="${id}" data-action="delete"><i class="fas fa-trash"></i></button>
+      </td>
+    `;
+    // actions
+    tr.querySelector("[data-action='edit']").onclick = ()=> openEdit(n);
+    tr.querySelector("[data-action='delete']").onclick = ()=> {
+      openConfirm("Bạn có chắc muốn xóa bài viết này?", async ()=>{
+        try{
+          await fetch(API_NEWS + "/" + id, { method: "DELETE" });
+          showToast("Đã xóa bài viết", "success");
+          await loadNews();
+        }catch(e){ showToast("Xóa thất bại", "error"); }
+      });
+    };
+    // status toggle
+    tr.querySelector(".pill").onclick = async (ev) => {
+      const el = ev.currentTarget;
+      const id = el.dataset.id;
+      const current = el.dataset.status;
+      const newStatus = current === "published" ? "draft" : "published";
+      try{
+        await fetch(API_NEWS + "/" + id + "/status", {
+          method: "PATCH",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ status: newStatus })
+        });
+        showToast("Cập nhật trạng thái", "success");
+        await loadNews();
+      }catch(e){
+        showToast("Cập nhật trạng thái thất bại", "error");
+      }
+    };
+    newsTbody.appendChild(tr);
+  });
+}
+
+/* Escape HTML to avoid injection in titles */
+function escapeHtml(s){
+  if(!s) return "";
+  return String(s)
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+
+/* Format date */
+function formatDate(v){
+  if(!v) return "-";
+  const d = new Date(v);
+  if(isNaN(d)) return String(v).slice(0,19);
+  return d.toLocaleString("vi-VN");
+}
+
+/* Add button opens modal */
+addBtn.onclick = ()=> openModal(false);
+
+// Open edit with API detail
+async function openEdit(n) {
+  openModal(true);
+  const id = n.id || n._id || n.ID || "";
+  currentEditId = id;
+  newsIdEl.value = id;
+
+  try {
+    // ✅ Gọi API chi tiết
+    const res = await fetch(`${API_NEWS}/${id}`);
+    if(!res.ok) throw new Error("Không lấy được dữ liệu chi tiết");
+    const data = await res.json();
+
+    // Gán vào form
+    document.getElementById("title").value = data.title || "";
+    document.getElementById("categorySelect").value = data.category || "Tin hoạt động";
+    document.getElementById("summary").value = data.summary || "";
+    document.getElementById("author").value = data.author || "Admin";
+
+    document.getElementById("content").value = data.content || "";
+
+    // Ảnh
+// ✅ Xử lý hiển thị ảnh (dù lưu trong DB dạng Base64 hay đường dẫn)
+imageInput.value = "";
+imageInput.dataset.oldImage = data.image || "";
+
+if (data.image) {
+  let imgSrc = "";
+
+  if (data.image.startsWith("data:image")) {
+    // ảnh Base64 đã có prefix
+    imgSrc = data.image;
+  } else if (/^[A-Za-z0-9+/=]+$/.test(data.image.trim())) {
+    // ảnh Base64 nhưng chưa có prefix
+    imgSrc = `data:image/jpeg;base64,${data.image}`;
+  } else if (data.image.startsWith("http")) {
+    // ảnh URL đầy đủ
+    imgSrc = data.image;
+  } else {
+    // ảnh dạng đường dẫn từ server
+    imgSrc = `${API_BASE}/${data.image.replace(/^\/+/, "")}`;
+  }
+
+  imgPreview.src = imgSrc;
+  imgPreview.style.display = "inline-block";
+} else {
+  imgPreview.src = "";
+  imgPreview.style.display = "none";
+}
+
+  } catch(err) {
+    console.error(err);
+    showToast("Không tải được dữ liệu chi tiết", "error");
+  }
+}
+
+/* Submit (create or update) */
+newsForm.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const id = newsIdEl.value || null;
+  const fd = new FormData();
+  fd.append("title", document.getElementById("title").value.trim());
+  fd.append("summary", document.getElementById("summary").value.trim());
+  fd.append("content", document.getElementById("content").value.trim());
+  fd.append("author", document.getElementById("author").value.trim() || "Admin");
+  fd.append("category", document.getElementById("categorySelect").value);
+
+  const file = imageInput.files[0];
+  if(file){
+    fd.append("image", file); // Ảnh mới
+  } else if(imageInput.dataset.oldImage){
+    fd.append("oldImage", imageInput.dataset.oldImage); // Không chọn ảnh mới → giữ ảnh cũ
+  }
+
+  try{
+    const res = await fetch(id ? `${API_NEWS}/${id}` : API_NEWS, {
+      method: id ? "PUT" : "POST",
+      body: fd
+    });
+    if(!res.ok) throw new Error("Request failed");
+    showToast(id ? "Cập nhật bài viết thành công" : "Đã tạo bài viết mới", "success");
+    closeModal();
+    await loadNews();
+  }catch(err){
+    console.error(err);
+    showToast("Lưu bài viết thất bại", "error");
+  }
+});
+
+/* Filter & search */
+filterCategory.onchange = () => applyFilterSearch();
+searchBtn.onclick = () => applyFilterSearch();
+
+function applyFilterSearch(){
+  const cat = filterCategory.value.trim();
+  const q = searchInput.value.trim().toLowerCase();
+  let list = latestNews.slice();
+  if(cat) list = list.filter(x => (x.category||"").toLowerCase() === cat.toLowerCase());
+  if(q) list = list.filter(x => (x.title||"").toLowerCase().includes(q));
+  renderNews(list);
+}
+
+/* Init: click outside overlays closes */
+modalOverlay.addEventListener("click", (e)=>{ if(e.target === modalOverlay) closeModal(); });
+confirmOverlay.addEventListener("click", (e)=>{ if(e.target === confirmOverlay) closeConfirm(); });
+
+/* initial load */
+loadNews();
+
+// Toggle submenu Quản lý nhân viên
+const toggleNhanVien = document.getElementById("toggleNhanVien");
+const submenuNhanVien = document.getElementById("submenuNhanVien");
+toggleNhanVien.onclick = (e) => {
+  e.preventDefault();
+  submenuNhanVien.classList.toggle("show");
+};
+
+
+</script>
+</body>
+</html>

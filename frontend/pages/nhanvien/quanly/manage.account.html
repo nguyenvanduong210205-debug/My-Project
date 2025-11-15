@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý tài khoản - DHST Hospital</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+  :root{
+    --primary:#2563eb; --accent:#38bdf8; --bg:#f9fafb; --card:#fff;
+    --text:#1e293b; --muted:#6b7280; --radius:14px; --shadow:0 10px 30px rgba(0,0,0,0.08);
+  }
+  *{box-sizing:border-box;font-family:"Inter",sans-serif;margin:0;padding:0;}
+  body{display:flex;min-height:100vh;background:var(--bg);color:var(--text);}
+  
+  /* Sidebar */
+  .sidebar{
+    width:240px;background:#1e293b;color:#fff;display:flex;flex-direction:column;
+    justify-content:space-between;
+    padding:24px 16px;box-shadow:2px 0 8px rgba(0,0,0,0.1);
+  }
+  .brand{font-size:22px;font-weight:700;margin-bottom:30px;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;}
+  .nav a{
+    display:flex;align-items:center;gap:10px;color:#cbd5e1;
+    text-decoration:none;padding:12px 14px;border-radius:10px;transition:all .25s;
+  }
+.submenu-group { display:flex; flex-direction:column; }
+.submenu { display:none; flex-direction:column; margin-left:24px; margin-top:4px; }
+.submenu a {
+  font-size:14px; color:#cbd5e1; padding:10px 12px;
+  border-radius:8px; transition:all .25s;
+}
+.submenu a:hover { background:rgba(255,255,255,0.1); color:#fff; transform:translateX(4px); }
+.submenu.show { display:flex; }
+
+  .nav a:hover,.nav a.active{background:var(--primary);color:#fff;transform:translateX(4px);}
+  .nav a i{width:20px;text-align:center;}
+
+  /* 🔹 Nút đăng xuất */
+  .logout {
+    margin-top:20px;
+  }
+  .logout button {
+    width:100%;
+    background:#ef4444;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:10px 14px;
+    font-weight:600;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:all .25s;
+  }
+  .logout button:hover {
+    background:#dc2626;
+    transform:translateY(-2px);
+  }
+
+  /* Main */
+  .main{flex:1;padding:32px;overflow:auto;}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
+  header h1{font-size:26px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:10px;}
+  header .small{color:var(--muted);}
+  
+  /* Card */
+  .card{
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:26px;margin-bottom:30px;animation:fadeIn .4s ease;
+  }
+  .card h2{font-size:18px;margin-bottom:18px;display:flex;align-items:center;gap:10px;color:var(--text);}
+  .card h2 i{color:var(--primary);}
+  
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  
+  /* Form */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  label{font-weight:600;font-size:14px;margin-bottom:6px;display:block;color:var(--text);}
+  input,select{
+    width:100%;padding:12px 14px;border:1px solid #e2e8f0;border-radius:10px;
+    font-size:14px;transition:border .2s,box-shadow .2s;
+  }
+  input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.15);outline:none;}
+  .btn{
+    background:var(--primary);color:#fff;padding:12px 20px;border:none;
+    border-radius:10px;font-weight:600;cursor:pointer;transition:all .25s;
+  }
+  .btn:hover{opacity:.9;transform:translateY(-2px);}
+  
+  /* Table */
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;margin-top:10px;}
+  thead th{
+    background:linear-gradient(90deg,var(--primary),#1e40af);color:#fff;
+    padding:12px 16px;text-align:left;font-weight:600;
+  }
+  tbody td{padding:12px 16px;border-bottom:1px solid #f1f5f9;}
+  tr:hover td{background:#f8fafc;}
+  .pill{display:inline-block;padding:6px 14px;border-radius:999px;color:#fff;font-weight:600;font-size:13px;}
+  .pill.active{background:#16a34a;}
+  .pill.inactive{background:#ef4444;}
+  
+  /* Toast */
+  .toast-wrap{position:fixed;right:24px;top:24px;z-index:90;display:flex;flex-direction:column;gap:10px;}
+  .toast{
+    background:#fff;padding:12px 16px;border-left:6px solid;border-radius:12px;
+    box-shadow:var(--shadow);animation:fadeIn .4s ease;
+  }
+  .toast.success{border-color:#16a34a;}
+  .toast.error{border-color:#ef4444;}
+  
+  /* Modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;
+    align-items:center;justify-content:center;z-index:80;animation:fadeIn .3s ease;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:#fff;border-radius:16px;padding:26px;min-width:320px;
+    max-width:480px;box-shadow:0 20px 45px rgba(0,0,0,0.2);animation:scaleIn .3s ease;
+  }
+  @keyframes scaleIn{from{opacity:0;transform:scale(.9);}to{opacity:1;transform:scale(1);}}
+  .modal h3{margin-bottom:10px;font-size:18px;display:flex;align-items:center;gap:8px;color:var(--text);}
+  .modal p{font-size:14px;color:var(--muted);margin-bottom:16px;}
+  .modal .actions{display:flex;justify-content:flex-end;gap:10px;}
+  .btn-secondary{background:#94a3b8;}
+  .btn-danger{background:#ef4444;}
+  
+  .confirm-icon{
+    width:52px;height:52px;border-radius:50%;background:#fef2f2;
+    color:#ef4444;display:flex;align-items:center;justify-content:center;
+    font-size:24px;margin:0 auto 14px;
+  }
+
+  @media (max-width:900px){.grid{grid-template-columns:1fr;}.sidebar{display:none;}.main{padding:20px;}}
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div>
+      <div class="brand"><i class="fas fa-hospital"></i> DHST Hospital</div>
+      <nav class="nav">
+        <a class="active" href="#"><i class="fas fa-user-cog"></i> Quản lý tài khoản</a>
+        <div class="submenu-group">
+          <a href="#" id="toggleNhanVien"><i class="fas fa-user-friends"></i> Quản lý thông tin nhân viên 
+            <i class="fas fa-chevron-down" style="margin-left:auto;font-size:12px;"></i>
+          </a>
+          <div id="submenuNhanVien" class="submenu">
+            <a href="manage.bacsi.html"><i class="fas fa-user-md"></i> Quản lý bác sĩ</a>
+            <a href="manage.letan.html"><i class="fas fa-concierge-bell"></i> Quản lý lễ tân</a>
+          </div>
+        </div>
+        <a href="manage.lichlamviec.html"><i class="fas fa-calendar-alt"></i> Quản lý lịch làm việc</a>
+        <a href="manage.news.html"><i class="fas fa-newspaper"></i> Quản lý bài viết</a>
+      </nav>
+    </div>
+    <!-- ✅ Nút đăng xuất -->
+    <div class="logout">
+      <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header>
+      <h1><i class="fas fa-users"></i> Quản lý tài khoản</h1>
+      <div class="small">Xin chào, Admin 👋</div>
+    </header>
+
+    <!-- Form -->
+    <section class="card">
+      <h2><i class="fas fa-user-plus"></i> Tạo tài khoản mới</h2>
+      <div class="grid" style="margin-bottom:16px">
+        <div><label>Họ & tên</label><input id="fullname" placeholder="Nguyễn Văn A"></div>
+        <div><label>Tên đăng nhập</label><input id="username" placeholder="username123"></div>
+        <div><label>Số điện thoại</label><input id="phone" placeholder="09xxxxxxxx"></div>
+        <div><label>Email</label><input id="email" type="email" placeholder="email@domain.com"></div>
+        <div>
+          <label>Vai trò</label>
+          <select id="role">
+            <option value="">-- Chọn vai trò --</option>
+            <option value="BACSI">Bác sĩ</option>
+            <option value="LETAN">Lễ tân</option>
+          </select>
+        </div>
+        <div id="khoaWrap" style="display:none">
+          <label>Chọn khoa</label>
+          <select id="khoa"><option value="">Đang tải...</option></select>
+        </div>
+      </div>
+      <button id="createBtn" class="btn"><i class="fas fa-plus-circle"></i> Tạo tài khoản</button>
+      <span id="btnSpinner" style="display:none;margin-left:10px;color:var(--primary);font-weight:600;">Đang gửi...</span>
+    </section>
+
+    <!-- Danh sách -->
+    <section class="card">
+<h2 style="display:flex;justify-content:space-between;align-items:center;">
+  <span><i class="fas fa-list"></i> Danh sách tài khoản</span>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <input id="searchInput" type="text" placeholder="🔍 Tìm theo mã hoặc tên..."
+      style="padding:10px 12px;border:1px solid #e2e8f0;border-radius:10px;font-size:14px;width:240px;">
+    <button id="clearSearch" class="btn" style="background:#94a3b8;"><i class="fas fa-times"></i></button>
+  </div>
+</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:80px">Mã NV</th>
+              <th>Họ tên</th>
+              <th>Tên đăng nhập</th>
+              <th style="width:110px">Chức vụ</th>
+              <th style="width:140px">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="accountsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="overlay" class="overlay">
+    <div class="modal" id="modalBox">
+      <div id="confirmSection" style="display:none;text-align:center;">
+        <div class="confirm-icon"><i class="fas fa-triangle-exclamation"></i></div>
+        <h3>Xác nhận hành động</h3>
+        <p id="confirmMsg"></p>
+        <div class="actions">
+          <button id="confirmCancel" class="btn btn-secondary">Hủy</button>
+          <button id="confirmOk" class="btn btn-danger">Xác nhận</button>
+        </div>
+      </div>
+      <div id="infoSection">
+        <h3><i class="fas fa-info-circle"></i> <span id="modalTitle">Thông báo</span></h3>
+        <p id="modalMsg"></p>
+        <div class="actions"><button id="modalClose" class="btn btn-secondary">Đóng</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toasts" class="toast-wrap"></div>
+
+<script>
+  // ================= CẤU HÌNH API =================
+  const API_BASE = "http://localhost:3000";
+  const API_USERS = API_BASE + "/api/users";
+  const API_ACCOUNTS = API_BASE + "/api/accounts";
+  const API_KHOA = API_BASE + "/api/khoa";
+
+  // ================= BIẾN DOM =================
+  const elFull = document.getElementById("fullname");
+  const elUser = document.getElementById("username");
+  const elPhone = document.getElementById("phone");
+  const elEmail = document.getElementById("email");
+  const elRole = document.getElementById("role");
+  const elKhoaWrap = document.getElementById("khoaWrap");
+  const elKhoa = document.getElementById("khoa");
+  const btnCreate = document.getElementById("createBtn");
+  const spinner = document.getElementById("btnSpinner");
+  const accountsTbody = document.getElementById("accountsTbody");
+
+  const overlay = document.getElementById("overlay");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalMsg = document.getElementById("modalMsg");
+  const modalClose = document.getElementById("modalClose");
+  const confirmSection = document.getElementById("confirmSection");
+  const infoSection = document.getElementById("infoSection");
+  const confirmMsg = document.getElementById("confirmMsg");
+  const confirmCancel = document.getElementById("confirmCancel");
+  const confirmOk = document.getElementById("confirmOk");
+  const toasts = document.getElementById("toasts");
+
+  const searchInput = document.getElementById("searchInput");
+  const clearSearch = document.getElementById("clearSearch");
+
+  let allAccounts = [];
+
+  // ================= TOAST =================
+  function showToast(text, type = "success", ms = 3000) {
+    const t = document.createElement("div");
+    t.className = "toast " + (type === "success" ? "success" : "error");
+    t.innerHTML = `<strong>${type === "success" ? "Thành công" : "Lỗi"}</strong>
+      <div style="font-size:13px;margin-top:4px;">${text}</div>`;
+    toasts.appendChild(t);
+    setTimeout(() => (t.style.opacity = 0), ms - 600);
+    setTimeout(() => t.remove(), ms);
+  }
+
+  // ================= MODAL =================
+  function openModal(title, msg, extraHTML = "") {
+    infoSection.style.display = "block";
+    confirmSection.style.display = "none";
+    modalTitle.textContent = title;
+    modalMsg.innerHTML = msg + (extraHTML ? `<div style="margin-top:14px;">${extraHTML}</div>` : "");
+    overlay.classList.add("show");
+  }
+
+  function openConfirm(msg, callback) {
+    confirmSection.style.display = "block";
+    infoSection.style.display = "none";
+    confirmMsg.textContent = msg;
+    overlay.classList.add("show");
+    confirmOk.onclick = () => {
+      closeModal();
+      callback(true);
+    };
+    confirmCancel.onclick = () => {
+      closeModal();
+      callback(false);
+    };
+  }
+
+  function closeModal() {
+    overlay.classList.remove("show");
+  }
+
+  modalClose.onclick = closeModal;
+  overlay.onclick = (e) => {
+    if (e.target === overlay) closeModal();
+  };
+
+  // ================= LOAD KHOA =================
+  async function loadKhoa() {
+    try {
+      const r = await fetch(API_KHOA);
+      const data = await r.json();
+      elKhoa.innerHTML = '<option value="">-- Chọn khoa --</option>';
+      if (Array.isArray(data)) {
+        data.forEach((k) => {
+          const id = k.id_khoa || k.id;
+          const name = k.ten_khoa || k.name;
+          elKhoa.insertAdjacentHTML("beforeend", `<option value="${id}">${name}</option>`);
+        });
+      }
+    } catch {
+      elKhoa.innerHTML = '<option value="">(Lỗi tải khoa)</option>';
+    }
+  }
+
+  // ================= LOAD DANH SÁCH =================
+  async function loadAccounts() {
+    try {
+      const r = await fetch(API_ACCOUNTS);
+      const data = await r.json();
+      allAccounts = Array.isArray(data) ? data : [];
+      renderAccounts(allAccounts);
+    } catch {
+      accountsTbody.innerHTML = "<tr><td colspan='5' style='color:red'>Lỗi tải dữ liệu</td></tr>";
+    }
+  }
+
+  function renderAccounts(list) {
+    accountsTbody.innerHTML = "";
+    if (!list.length) {
+      accountsTbody.innerHTML = "<tr><td colspan='5' style='color:#999'>Không tìm thấy tài khoản</td></tr>";
+      return;
+    }
+
+    list.forEach((acc) => {
+      const id = acc.id_taikhoan || acc.id;
+      const name = acc.ho_ten || acc.name;
+      const uname = acc.username || "-";
+      const role = acc.role || "-";
+      const status = acc.status || "INACTIVE";
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${id}</td><td>${name}</td><td>${uname}</td><td>${role}</td>`;
+      const td = document.createElement("td");
+      const span = document.createElement("span");
+      span.className = "pill " + (status === "ACTIVE" ? "active" : "inactive");
+      span.textContent = status === "ACTIVE" ? "Hoạt động" : "Khóa";
+
+      span.onclick = () => {
+        openConfirm(`Bạn có chắc muốn ${status === "ACTIVE" ? "khóa" : "mở khóa"} tài khoản này?`, async (ok) => {
+          if (!ok) return;
+          try {
+            const res = await fetch(API_ACCOUNTS + "/" + id + "/status", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                status: status === "ACTIVE" ? "INACTIVE" : "ACTIVE",
+              }),
+            });
+            if (res.ok) showToast("Cập nhật trạng thái thành công");
+            else showToast("Cập nhật thất bại", "error");
+            await loadAccounts();
+          } catch {
+            showToast("Lỗi kết nối máy chủ", "error");
+          }
+        });
+      };
+
+      td.appendChild(span);
+      tr.appendChild(td);
+      accountsTbody.appendChild(tr);
+    });
+  }
+
+  // ================= TÌM KIẾM =================
+  searchInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const keyword = searchInput.value.trim().toLowerCase();
+      if (!keyword) {
+        renderAccounts(allAccounts);
+        showToast("Vui lòng nhập tên để tìm kiếm", "error");
+        return;
+      }
+      const filtered = allAccounts.filter((acc) =>
+        (acc.ho_ten || acc.name || "").toLowerCase().includes(keyword)
+      );
+      renderAccounts(filtered);
+      if (!filtered.length) showToast("Không tìm thấy tài khoản phù hợp", "error");
+    }
+  });
+
+  clearSearch.onclick = () => {
+    searchInput.value = "";
+    renderAccounts(allAccounts);
+  };
+
+  // ================= FORM TẠO TÀI KHOẢN =================
+  elRole.onchange = () => (elKhoaWrap.style.display = elRole.value === "BACSI" ? "" : "none");
+
+  // Thêm nút "Hủy"
+  const cancelBtn = document.createElement("button");
+  cancelBtn.className = "btn btn-secondary";
+  cancelBtn.style.marginLeft = "10px";
+  cancelBtn.innerHTML = `<i class="fas fa-times"></i> Hủy`;
+  btnCreate.insertAdjacentElement("afterend", cancelBtn);
+
+  cancelBtn.onclick = () => {
+    openConfirm("Bạn có chắc muốn hủy? Thông tin chưa lưu sẽ bị mất.", (ok) => {
+      if (ok) {
+        [elFull, elUser, elPhone, elEmail, elRole, elKhoa].forEach((el) => (el.value = ""));
+        elKhoaWrap.style.display = "none";
+        showToast("Đã hủy thao tác tạo tài khoản");
+      }
+    });
+  };
+
+  btnCreate.onclick = async () => {
+    const hoten = elFull.value.trim();
+    const username = elUser.value.trim();
+    const phone = elPhone.value.trim();
+    const email = elEmail.value.trim();
+    const role = elRole.value;
+    const id_khoa = role === "BACSI" ? elKhoa.value || null : null;
+
+    // 1️⃣ Bắt buộc nhập
+    if (!hoten || !username || !email || !role || (role === "BACSI" && !id_khoa)) {
+      showToast("Vui lòng điền đầy đủ thông tin bắt buộc (*)", "error");
+      [elFull, elUser, elEmail, elRole, elKhoa].forEach((f) => {
+        if (!f.value.trim()) f.style.borderColor = "red";
+        else f.style.borderColor = "#e2e8f0";
+      });
+      return;
+    }
+
+    // 2️⃣ Tên đăng nhập không có ký tự đặc biệt
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(username)) {
+      openModal("Tên đăng nhập không hợp lệ", "Tên đăng nhập không được chứa dấu cách hoặc ký tự đặc biệt.");
+      return;
+    }
+
+    // 3️⃣ Email hợp lệ
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      openModal("Email không hợp lệ", "Định dạng email không hợp lệ. Vui lòng kiểm tra lại.");
+      return;
+    }
+
+    // 4️⃣ Số điện thoại hợp lệ
+    const phoneRegex = /^(0[1-9][0-9]{8,9})$/;
+    if (phone && !phoneRegex.test(phone)) {
+      openModal("Số điện thoại không hợp lệ", "Số điện thoại không hợp lệ. Vui lòng nhập 10-11 chữ số.");
+      elPhone.style.borderColor = "red";
+      return;
+    }
+
+    // 5️⃣ Kiểm tra trùng tên đăng nhập / email
+    try {
+      const r = await fetch(API_ACCOUNTS);
+      const list = await r.json();
+      if (Array.isArray(list)) {
+        if (list.some((acc) => acc.username === username)) {
+          openModal("Tên đăng nhập đã tồn tại", "Tên đăng nhập đã được sử dụng. Vui lòng chọn tên khác.");
+          return;
+        }
+        if (list.some((acc) => acc.email === email)) {
+          openModal("Email đã tồn tại", "Email đã được sử dụng. Vui lòng nhập email khác.");
+          return;
+        }
+      }
+    } catch {
+      showToast("Không thể kiểm tra tài khoản hiện có", "error");
+      return;
+    }
+
+    // ✅ Gửi API thật
+    btnCreate.disabled = true;
+    spinner.style.display = "inline";
+
+    const payload = { username, hoten, role, status: "ACTIVE", id_khoa, phone, email };
+
+    try {
+      const res = await fetch(API_USERS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        showToast("Tạo tài khoản thành công");
+        await loadAccounts();
+
+        const password = data.account?.password || "(Không nhận được mật khẩu)";
+        const returnedUser = data.account?.username || username;
+
+        const html = `
+          <div style="background:#f9fafb;padding:14px;border-radius:12px;border:1px solid #e5e7eb;">
+            <div><strong>Tên đăng nhập:</strong> ${returnedUser}</div>
+            <div><strong>Mật khẩu:</strong> ${password}</div>
+          </div>
+          <button id="copyBtn" class="btn" style="margin-top:14px;width:100%;">
+            <i class="fas fa-copy"></i> Sao chép thông tin
+          </button>
+        `;
+        openModal("Tài khoản đã được tạo!", "Hãy gửi thông tin này cho người dùng:", html);
+
+        setTimeout(() => {
+          const copyBtn = document.getElementById("copyBtn");
+          if (copyBtn)
+            copyBtn.onclick = () => {
+              navigator.clipboard.writeText(`Tên đăng nhập: ${returnedUser}\nMật khẩu: ${password}`);
+              showToast("Đã sao chép thông tin vào clipboard");
+            };
+        }, 300);
+      } else {
+        openModal("Lỗi", data.error || data.message || "Không thể tạo tài khoản");
+      }
+    } catch {
+      openModal("Lỗi kết nối", "Không thể kết nối tới server");
+    } finally {
+      btnCreate.disabled = false;
+      spinner.style.display = "none";
+    }
+  };
+
+  // ================= KHỞI TẠO =================
+  (async () => {
+    await loadKhoa();
+    await loadAccounts();
+  })();
+
+  // ================= SUBMENU =================
+  const toggleNhanVien = document.getElementById("toggleNhanVien");
+  const submenuNhanVien = document.getElementById("submenuNhanVien");
+  toggleNhanVien.onclick = (e) => {
+    e.preventDefault();
+    submenuNhanVien.classList.toggle("show");
+  };
+
+  // ================= ĐĂNG XUẤT =================
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn.onclick = () => {
+    if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = "../login.html";
+    }
+  };
+</script>
+</body>
+</html>

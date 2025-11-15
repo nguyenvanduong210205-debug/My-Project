@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập hệ thống</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ... (Phần STYLE không thay đổi) ... */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        /* ... (Các CSS còn lại) ... */
+        .login-card {
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            width: 360px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+        }
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        .login-card h2 {
+            margin-bottom: 30px;
+            color: #4facfe;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+        .input-group {
+            position: relative;
+            margin: 12px 0;
+            width: 100%;
+        }
+        .input-group i {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 16px;
+            pointer-events: none;
+        }
+        .login-card input {
+            width: 100%;
+            padding: 14px 16px 14px 40px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .login-card input:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 8px rgba(79,172,254,0.3);
+        }
+        .login-card button {
+            width: 100%;
+            padding: 14px;
+            background: #4facfe;
+            border: none;
+            color: white;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 10px;
+        }
+        .login-card button:hover {
+            background: #00aaff;
+            transform: translateY(-2px);
+        }
+        .error {
+            color: #ff4d4f;
+            margin-top: 14px;
+            font-size: 14px;
+            min-height: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>Đăng nhập</h2>
+        <form id="login-form">
+            <div class="input-group">
+                <i class="fa fa-user"></i>
+                <input type="text" id="username" placeholder="Tên đăng nhập" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock"></i>
+                <input type="password" id="password" placeholder="Mật khẩu" required>
+            </div>
+            <button type="submit">Đăng nhập</button>
+        </form>
+        <div class="error" id="error-msg"></div>
+    </div>
+
+<script>
+    const form = document.getElementById("login-form");
+    const errorMsg = document.getElementById("error-msg");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorMsg.textContent = "";
+
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        try {
+            const res = await fetch("http://localhost:3000/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                errorMsg.textContent = data.error || "Tên đăng nhập hoặc mật khẩu không đúng!";
+                return;
+            }
+
+            // ✅ Lưu thông tin người dùng
+            localStorage.setItem("user", JSON.stringify(data.user));
+            localStorage.setItem("role", data.user.role);
+            if (data.user.role?.toUpperCase() === "BACSI") {
+                localStorage.setItem("doctorId", data.user.id);
+            }
+
+            // ✅ Chuyển hướng theo vai trò
+            const role = data.user.role?.toUpperCase();
+            switch (role) {
+                case "BACSI":
+                    window.location.href = "http://localhost:3000/nhanvien/Bacsi/DoctorDHST.html";
+                    break;
+                case "LETAN":
+                    window.location.href = "http://localhost:3000/nhanvien/letan/reception.html";
+                    break;
+                case "ADMIN":
+                    window.location.href = "http://localhost:3000/nhanvien/quanly/manage.account.html";
+                    break;
+                default:
+                    errorMsg.textContent = "Không xác định được vai trò người dùng!";
+            }
+        } catch (err) {
+            console.error("❌ Lỗi đăng nhập:", err);
+            errorMsg.textContent = "Không thể kết nối tới máy chủ!";
+        }
+    });
+</script>
+</body>
+</html>

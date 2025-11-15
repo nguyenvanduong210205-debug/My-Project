@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết bác sĩ - DHST Hospital</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+  :root {
+    --primary: #1e40af;
+    --secondary: #2563eb;
+    --light: #f1f5f9;
+    --text: #0f172a;
+    --muted: #64748b;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --card-bg: #ffffff;
+    --radius: 20px;
+    --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    --font: "Inter", "Segoe UI", sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font);
+  }
+
+  body {
+    background: linear-gradient(180deg, #f8fafc, #eef2ff);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 16px;
+  }
+
+  .profile-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 1100px;
+    width: 100%;
+    overflow: hidden;
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  header {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 24px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  button {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #fff;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-back { background: #475569; }
+  .btn-edit { background: #3b82f6; }
+  .btn-back:hover, .btn-edit:hover { transform: translateY(-2px); opacity: 0.9; }
+
+  .content {
+    display: flex;
+    padding: 40px;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .avatar {
+    flex: 1 1 280px;
+    text-align: center;
+  }
+
+  .avatar img {
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: 6px solid #fff;
+  }
+
+  .info {
+    flex: 2 1 600px;
+  }
+
+  .info h2 {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 14px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 20px;
+  }
+
+  .info-item {
+    background: var(--light);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 16px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .info-item strong {
+    color: var(--text);
+    min-width: 110px;
+  }
+
+  .section {
+    margin-top: 26px;
+  }
+
+  .section h3 {
+    font-size: 18px;
+    color: var(--secondary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .section p {
+    background: #f8fafc;
+    padding: 12px 14px;
+    border-radius: 10px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* Modal */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+
+  .overlay.show { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px;
+    animation: scaleIn 0.3s ease;
+  }
+
+  @keyframes scaleIn { from{opacity:0; transform:scale(.95);} to{opacity:1; transform:scale(1);} }
+
+  .modal h3 {
+    font-size: 22px;
+    color: var(--primary);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .modal label {
+    font-weight: 600;
+    color: var(--muted);
+    display: block;
+    margin-top: 10px;
+  }
+
+  .modal input, .modal textarea, .modal select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    margin-top: 6px;
+    font-size: 15px;
+    transition: border 0.2s;
+  }
+
+  .modal input:focus, .modal textarea:focus, .modal select:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.3);
+  }
+
+  .modal .actions {
+    margin-top: 16px;
+    justify-content: flex-end;
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-save { background: var(--success); }
+  .btn-cancel { background: var(--danger); }
+
+  #previewImage {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-top: 8px;
+    object-fit: cover;
+    box-shadow: var(--shadow);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .content { flex-direction: column; padding: 24px; }
+    .avatar img { width: 200px; height: 200px; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<body>
+  <div class="profile-card">
+    <header>
+      <h1><i class="fas fa-user-md"></i> Hồ sơ bác sĩ</h1>
+      <div class="actions">
+        <button class="btn-back" onclick="window.history.back()"><i class="fas fa-arrow-left"></i> Quay lại</button>
+        <button class="btn-edit" id="btnEdit"><i class="fas fa-pen"></i> Chỉnh sửa</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="avatar">
+        <img id="doctorImg" src="https://i.pravatar.cc/240?img=67" alt="Ảnh bác sĩ">
+      </div>
+
+      <div class="info">
+        <h2 id="doctorName">Đang tải...</h2>
+
+        <div class="info-grid">
+          <div class="info-item"><strong>Khoa:</strong> <span id="doctorDept">—</span></div>
+          <div class="info-item"><strong>Học vị:</strong> <span id="doctorDegree">—</span></div>
+          <div class="info-item"><strong>Chức vụ:</strong> <span id="doctorTitle">—</span></div>
+          <div class="info-item"><strong>Chuyên môn:</strong> <span id="doctorSpecialty">—</span></div>
+          <div class="info-item"><strong>Kinh nghiệm:</strong> <span id="doctorExp">—</span></div>
+          <div class="info-item"><strong>Điện thoại:</strong> <span id="doctorPhone">—</span></div>
+          <div class="info-item"><strong>Email:</strong> <span id="doctorEmail">—</span></div>
+          <div class="info-item"><strong>Địa chỉ:</strong> <span id="doctorAddr">—</span></div>
+        </div>
+
+        <div class="section">
+          <h3><i class="fas fa-graduation-cap"></i> Quá trình đào tạo</h3>
+          <p id="doctorEdu">—</p>
+        </div>
+
+        <div class="section">
+          <h3><i class="fas fa-briefcase-medical"></i> Quá trình công tác</h3>
+          <p id="doctorWork">—</p>
+        </div>
+
+        <div class="section">
+          <h3><i class="fas fa-stethoscope"></i> Thế mạnh & Kinh nghiệm</h3>
+          <p id="doctorSkill">—</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal chỉnh sửa giữ nguyên -->
+  <div id="editModal" class="overlay">
+    <div class="modal">
+      <h3><i class="fas fa-user-edit"></i> Cập nhật thông tin bác sĩ</h3>
+      <form id="editForm">
+        <label>Ảnh đại diện:</label>
+        <input type="file" id="hinhAnhInput" accept="image/*">
+        <img id="previewImage" src="https://i.pravatar.cc/150" alt="Preview">
+
+        <label>Học vị:</label>
+        <input id="hocVi">
+
+        <label>Chức vụ:</label>
+        <input id="chucVu">
+
+        <label>Chuyên môn:</label>
+        <input id="chuyenMon">
+
+        <label>Khoa:</label>
+        <select id="idKhoa">
+          <option value="">— Chọn khoa —</option>
+          <option value="K01">Nội tổng hợp</option>
+          <option value="K02">Ngoại tổng hợp</option>
+          <option value="K03">Sản khoa</option>
+          <option value="K04">Nhi khoa</option>
+          <option value="K05">Tai mũi họng</option>
+          <option value="K06">Răng hàm mặt</option>
+        </select>
+
+        <label>Năm kinh nghiệm:</label>
+        <input type="number" id="namKinhNghiem" min="0">
+
+        <label>Quá trình đào tạo:</label>
+        <textarea id="daoTao" rows="2"></textarea>
+
+        <label>Quá trình công tác:</label>
+        <textarea id="congTac" rows="2"></textarea>
+
+        <label>Thế mạnh & Kinh nghiệm:</label>
+        <textarea id="theManh" rows="2"></textarea>
+
+        <label>Điện thoại:</label>
+        <input id="phone">
+
+        <label>Email:</label>
+        <input id="email">
+
+        <label>Địa chỉ:</label>
+        <input id="diachi">
+
+        <div class="actions">
+          <button type="button" class="btn-cancel" id="btnCancel">Hủy</button>
+          <button type="submit" class="btn-save">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+<script>
+  const el = id => document.getElementById(id);
+  const API_BASE = "http://localhost:3000/api";
+  const params = new URLSearchParams(window.location.search);
+  const id_bacsi = params.get("id") || params.get("id_bacsi");
+  let currentDoctor = null;
+
+  // ===============================
+  // TOAST THÔNG BÁO
+  // ===============================
+  function showToast(msg, type = "success") {
+    const old = document.querySelector(".toast");
+    if (old) old.remove();
+
+    const toast = document.createElement("div");
+    toast.textContent = msg;
+    toast.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === "success" ? "#16a34a" : "#dc2626"};
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 9999;
+      font-weight: 600;
+      animation: fadeIn .3s ease;
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => (toast.style.opacity = 0), 2500);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  // ===============================
+  // TẢI DANH SÁCH KHOA
+  // ===============================
+  async function loadKhoa() {
+    try {
+      const res = await fetch(`${API_BASE}/khoa`);
+      if (!res.ok) throw new Error("Không thể tải danh sách khoa");
+      const list = await res.json();
+      const select = el("idKhoa");
+      select.innerHTML = `<option value="">— Chọn khoa —</option>`;
+      list.forEach(k => {
+        const opt = document.createElement("option");
+        opt.value = k.id_khoa;
+        opt.textContent = k.ten_khoa;
+        select.appendChild(opt);
+      });
+    } catch (err) {
+      console.error(err);
+      showToast("Lỗi khi tải danh sách khoa", "error");
+    }
+  }
+
+  // ===============================
+  // TẢI THÔNG TIN BÁC SĨ
+  // ===============================
+  async function loadDoctor() {
+    try {
+      const res = await fetch(`${API_BASE}/listdoctor/${id_bacsi}`);
+      if (!res.ok) throw new Error("Không tìm thấy bác sĩ");
+      const d = await res.json();
+      currentDoctor = d;
+
+      el("doctorName").textContent = d.ho_ten;
+      el("doctorDept").textContent = d.ten_khoa || "—";
+      el("doctorDegree").textContent = d.hoc_vi || "—";
+      el("doctorTitle").textContent = d.chuc_vu || "—";
+      el("doctorSpecialty").textContent = d.chuyen_mon || "—";
+      el("doctorExp").textContent = d.nam_kinh_nghiem ? d.nam_kinh_nghiem + " năm" : "—";
+      el("doctorPhone").textContent = d.phone || "—";
+      el("doctorEmail").textContent = d.email || "—";
+      el("doctorAddr").textContent = d.diachi || "—";
+      el("doctorEdu").textContent = d.qua_trinh_dao_tao || "—";
+      el("doctorWork").textContent = d.qua_trinh_cong_tac || "—";
+      el("doctorSkill").textContent = d.the_manh_kinh_nghiem || "—";
+
+      if (d.hinh_anh) {
+        el("doctorImg").src = d.hinh_anh.startsWith("data:image")
+          ? d.hinh_anh
+          : `data:image/jpeg;base64,${d.hinh_anh}`;
+      } else {
+        el("doctorImg").src = "https://i.pravatar.cc/240?img=67";
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Không thể tải dữ liệu bác sĩ", "error");
+    }
+  }
+
+  // ===============================
+  // MỞ FORM CHỈNH SỬA
+  // ===============================
+  el("btnEdit").onclick = () => {
+    if (!currentDoctor) return;
+    el("editModal").classList.add("show");
+
+    el("hocVi").value = currentDoctor.hoc_vi || "";
+    el("chucVu").value = currentDoctor.chuc_vu || "";
+    el("chuyenMon").value = currentDoctor.chuyen_mon || "";
+    el("idKhoa").value = currentDoctor.id_khoa || "";
+    el("namKinhNghiem").value = currentDoctor.nam_kinh_nghiem || 0;
+    el("daoTao").value = currentDoctor.qua_trinh_dao_tao || "";
+    el("congTac").value = currentDoctor.qua_trinh_cong_tac || "";
+    el("theManh").value = currentDoctor.the_manh_kinh_nghiem || "";
+    el("phone").value = currentDoctor.phone || "";
+    el("email").value = currentDoctor.email || "";
+    el("diachi").value = currentDoctor.diachi || "";
+
+    el("previewImage").src =
+      currentDoctor.hinh_anh && currentDoctor.hinh_anh.startsWith("data:image")
+        ? currentDoctor.hinh_anh
+        : currentDoctor.hinh_anh
+        ? `data:image/jpeg;base64,${currentDoctor.hinh_anh}`
+        : "https://i.pravatar.cc/150";
+  };
+
+  el("btnCancel").onclick = () => el("editModal").classList.remove("show");
+
+  el("hinhAnhInput").onchange = e => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = ev => (el("previewImage").src = ev.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // ===============================
+  // GỬI DỮ LIỆU CẬP NHẬT (KIỂM TRA HỢP LỆ)
+  // ===============================
+  el("editForm").onsubmit = async e => {
+    e.preventDefault();
+
+    const phone = el("phone").value.trim();
+    const email = el("email").value.trim();
+
+    // 🧩 Kiểm tra định dạng email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) {
+      showToast("Email không hợp lệ!", "error");
+      return;
+    }
+
+    // 🧩 Kiểm tra định dạng số điện thoại Việt Nam
+    const phoneRegex = /^0\d{9}$/;
+    if (phone && !phoneRegex.test(phone)) {
+      showToast("Số điện thoại không hợp lệ (phải có 10 số và bắt đầu bằng 0)!", "error");
+      return;
+    }
+
+    // 🧩 Chuẩn bị form data
+    const fd = new FormData();
+    fd.append("hoc_vi", el("hocVi").value);
+    fd.append("chuc_vu", el("chucVu").value);
+    fd.append("chuyen_mon", el("chuyenMon").value);
+    fd.append("id_khoa", el("idKhoa").value);
+    fd.append("nam_kinh_nghiem", el("namKinhNghiem").value);
+    fd.append("qua_trinh_dao_tao", el("daoTao").value);
+    fd.append("qua_trinh_cong_tac", el("congTac").value);
+    fd.append("the_manh_kinh_nghiem", el("theManh").value);
+    fd.append("phone", phone);
+    fd.append("email", email);
+    fd.append("diachi", el("diachi").value);
+
+    const file = el("hinhAnhInput").files[0];
+    if (file) fd.append("hinh_anh", file);
+
+    try {
+      const res = await fetch(`${API_BASE}/listdoctor/${id_bacsi}`, {
+        method: "PUT",
+        body: fd,
+      });
+      const result = await res.json();
+
+      // 🔍 Kiểm tra phản hồi từ backend
+      if (!res.ok) {
+        const msg = result.message || "Lỗi khi cập nhật thông tin";
+        showToast(msg, "error");
+        return;
+      }
+
+      showToast("Cập nhật thành công!", "success");
+      el("editModal").classList.remove("show");
+      await loadDoctor();
+    } catch (err) {
+      console.error(err);
+      showToast("Không thể cập nhật thông tin bác sĩ", "error");
+    }
+  };
+
+  // ===============================
+  // KHỞI TẠO
+  // ===============================
+  document.addEventListener("DOMContentLoaded", async () => {
+    await loadKhoa();
+    await loadDoctor();
+  });
+</script>
+</html>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tin tức & Bài viết - DHST Healthcare</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===== PHẦN TỔNG QUAN VÀ MÀU SẮC CHỦ ĐẠO (GIỐNG BẢN SỬA LẦN TRƯỚC) ===== */
+* {margin:0; padding:0; box-sizing:border-box; font-family:"Montserrat",sans-serif;}
+body {background:#f4f7f9; color:#333; line-height:1.6;}
+a {text-decoration: none; color: inherit;}
+ul {list-style: none;}
+
+/* Màu sắc chủ đạo: Xanh Nước Biển */
+:root {
+    --primary-color: #0A66C2; 
+    --primary-light: #4285F4; 
+    --primary-dark: #074a8d; 
+    --accent-color: #FFD700; /* Màu vàng Gold cho điểm nhấn */
+    --text-color: #4a4a4a;
+    --bg-light: #ffffff;
+    --bg-grey-soft: #e8f4ff; /* Nền xám xanh nhẹ */
+}
+
+/* ===== HEADER NGHỆ THUẬT - XANH NƯỚC BIỂN ===== */
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--bg-light);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 60px; 
+    border-bottom: 1px solid #e0e0e0;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.logo img {
+    border-radius: 50%;
+    border: 4px solid var(--primary-color);
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 102, 194, 0.3);
+}
+.logo-title-group {
+    text-align: left;
+}
+.logo-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.hospital-slogan {
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary-light);
+    margin-top: 5px;
+}
+.call-to-action {
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s, transform 0.3s;
+}
+.call-to-action:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 102, 194, 0.4);
+}
+.main-nav-bar {
+    background: var(--primary-color);
+    padding: 0 60px;
+    min-height: 65px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-links {
+    display: flex;
+    gap: 0;
+}
+.nav-item {
+    position: relative;
+    padding: 0 20px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: white;
+    transition: background 0.3s, color 0.3s, transform 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align:center;
+}
+.nav-item:hover, .nav-item.active {
+    background: var(--primary-light);
+    color: white;
+    transform: translateY(-2px);
+    border-bottom: 3px solid var(--accent-color);
+}
+.nav-item.active {
+     background: var(--primary-dark);
+     color: var(--accent-color);
+     border-bottom: 3px solid var(--accent-color);
+}
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.2);
+}
+.search-bar input {
+    padding: 8px 12px;
+    border: none;
+    outline: none;
+    width: 180px;
+    background: transparent;
+    color: white;
+    &::placeholder {
+        color: rgba(255,255,255,0.7);
+    }
+}
+.search-bar button {
+    background: var(--primary-light);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.search-bar button:hover {
+    background: var(--primary-dark);
+}
+
+/* ===== NỘI DUNG TIN TỨC HẤP DẪN ===== */
+main {padding: 0;}
+.news-section {
+    padding: 40px 60px 70px; 
+    max-width: 1300px;
+    margin: 0 auto;
+}
+.news-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid var(--primary-color);
+}
+.news-header h2 {
+    font-size: 38px;
+    color: var(--primary-dark);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-family: 'Oswald', sans-serif;
+}
+.news-header p {color: #666; font-size: 18px;}
+
+/* THANH PHÂN LOẠI */
+.news-categories {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+.category-btn {
+    background: var(--bg-light);
+    color: var(--primary-dark);
+    border: 2px solid var(--primary-color);
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+.category-btn:hover, .category-btn.active {
+    background: var(--primary-color);
+    color: var(--accent-color);
+    border-color: var(--primary-dark);
+    box-shadow: 0 4px 10px rgba(0, 102, 194, 0.4);
+}
+
+/* TIN NỔI BẬT (FEATURED) */
+.featured-news-card {
+    display: flex;
+    background: var(--bg-light);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 50px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+.featured-img {
+    flex: 1;
+    min-width: 45%;
+    position: relative;
+}
+.featured-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.featured-content {
+    flex: 1;
+    padding: 35px;
+}
+.featured-tag {
+    display: inline-block;
+    background: var(--primary-dark);
+    color: var(--accent-color);
+    padding: 6px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+.featured-content h3 {
+    font-size: 30px;
+    color: var(--primary-dark);
+    margin-bottom: 20px;
+    line-height: 1.3;
+    font-family: 'Oswald', sans-serif;
+}
+.featured-content p {
+    font-size: 17px;
+    color: var(--text-color);
+    margin-bottom: 25px;
+}
+.featured-content a {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: gap 0.3s;
+}
+.featured-content a:hover {
+    color: var(--primary-dark);
+    gap: 15px;
+}
+
+/* KHUNG TIN THƯỜNG */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px; 
+}
+.news-card {
+    background: var(--bg-light);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1); 
+    border: 1px solid #e0e0e0;
+    transition: 0.3s ease;
+}
+.news-card:hover {
+    transform: translateY(-10px); 
+    box-shadow: 0 18px 30px rgba(0, 102, 194, 0.2); 
+}
+.news-card img {
+    width: 100%;
+    height: 240px; 
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.news-card:hover img {
+    transform: scale(1.08); 
+}
+.news-card-content {
+    padding: 25px; 
+    position: relative;
+}
+.news-date {
+    display: block;
+    font-size: 14px;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+.news-card-content h3 {
+    font-size: 20px;
+    color: var(--primary-dark);
+    margin-bottom: 15px;
+    line-height: 1.4;
+    min-height: 55px; 
+}
+.news-card-content p {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+.news-card-content a {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.news-card-content a:hover {
+    text-decoration: underline;
+    color: var(--primary-dark);
+}
+
+/* PHÂN TRANG */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+    gap: 12px;
+}
+.page-link {
+    background: var(--bg-light);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+.page-link.active, .page-link:hover {
+    background: var(--primary-color);
+    color: var(--accent-color);
+    border-color: var(--primary-dark);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .top-bar, .main-nav-bar {padding: 10px 30px;}
+    .featured-news-card {flex-direction: column;}
+    .featured-img {min-width: 100%; height: 280px;}
+    .news-section {padding: 30px 30px 50px;}
+    .news-grid {grid-template-columns: 1fr 1fr;}
+    .featured-content h3 {font-size: 26px;}
+}
+@media (max-width: 768px) {
+    .top-bar {flex-direction: column; gap: 10px; padding: 10px 20px;}
+    .call-to-action {display: none;}
+    .main-nav-bar {flex-direction: column; padding: 10px 20px; min-height: auto;}
+    .nav-links {flex-wrap: wrap; justify-content: center; gap: 5px; width: 100%;}
+    .nav-item {padding: 8px 10px; height: auto; font-size: 14px;}
+    .search-bar {margin-top: 15px; width: 100%;}
+    .news-header h2 {font-size: 30px;}
+    .news-categories {gap: 10px;}
+    .category-btn {font-size: 13px; padding: 8px 15px;}
+    .news-grid {grid-template-columns: 1fr;}
+    .featured-content h3 {font-size: 22px;}
+}
+
+/* FOOTER (Sử dụng lại footer đơn giản từ file gốc của bạn) */
+.main-footer {
+    background: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 20px 0; 
+    margin-top: 50px;
+}
+</style>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="top-bar">
+        <div class="logo">
+            <img src="logo.jpg" alt="DHST Healthcare Logo"> 
+            <div class="logo-title-group">
+                <div class="logo-title">DHST Healthcare</div>
+                <div class="hospital-slogan">Y Học Tiên Tiến - Chăm Sóc Tận Tâm</div>
+            </div>
+        </div>
+        <a href="tel:19001234" class="call-to-action">
+            <i class="fas fa-phone-alt"></i>
+            Tổng đài Hỗ trợ: 1900.1234
+        </a>
+    </div>
+
+    <nav class="main-nav-bar">
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-item ">Trang chủ</a></li>
+            <li><a href="tin-tuc.html" class="nav-item active">Tin tức & Bài viết</a></li>
+            <li><a href="dich-vu.html" class="nav-item">Dịch vụ</a></li>
+            <li><a href="bac-si.html" class="nav-item">Đội ngũ bác sĩ</a></li>
+            <li><a href="thiet-bi.html" class="nav-item">Thiết bị</a></li>
+            <li><a href="dat-lich.html" class="nav-item">Đặt lịch khám</a></li>
+            <li><a href="tra-cuu.html" class="nav-item">Tra cứu kết quả</a></li>
+        </ul>
+        
+    </nav>
+</header>
+
+<main>
+  <section class="news-section">
+    <div class="news-header">
+      <h2>TIN TỨC & BÀI VIẾT Y TẾ</h2>
+      <p>Cập nhật thông tin y tế chuyên sâu, hoạt động bệnh viện và lời khuyên sức khỏe từ chuyên gia.</p>
+    </div>
+
+    <div class="news-categories">
+      <button class="category-btn active">Tất cả</button>
+      <button class="category-btn">Tin hoạt động</button>
+      <button class="category-btn">Kiến thức Y khoa</button>
+      <button class="category-btn">Lời khuyên Sức khỏe</button>
+      <button class="category-btn">Nghiên cứu & Đổi mới</button>
+    </div>
+
+    <!-- 🌟 Tin nổi bật -->
+    <div class="featured-news-card">
+      <div class="featured-img">
+        <img src="bia.jpg" alt="Nghiên cứu y học">
+      </div>
+      <div class="featured-content">
+        <span class="featured-tag">NỔI BẬT</span>
+        <h3>DHST Đạt Chứng Nhận ISO 15189:2022 cho Hệ thống Xét nghiệm</h3>
+        <p>Chứng nhận mới khẳng định chất lượng và độ tin cậy của các dịch vụ xét nghiệm tại DHST, tuân thủ nghiêm ngặt các tiêu chuẩn quốc tế mới nhất. Đây là bước tiến quan trọng trong việc nâng cao dịch vụ khám chữa bệnh cho người dân.</p>
+        <a href="#">
+          Xem chi tiết 
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- 📰 Danh sách tin động -->
+    <div class="news-grid" id="news-grid-container">
+      <p style="text-align:center;">Đang tải tin tức...</p>
+    </div>
+
+    <!-- 🔢 Phân trang -->
+    <div class="pagination">
+      <a href="#" class="page-link"><i class="fas fa-angle-left"></i></a>
+      <a href="#" class="page-link active">1</a>
+      <a href="#" class="page-link">2</a>
+      <a href="#" class="page-link">3</a>
+      <a href="#" class="page-link"><i class="fas fa-angle-right"></i></a>
+    </div>
+  </section>
+</main>
+
+
+<footer class="main-footer">
+    <p>© 2025 DHST Healthcare | Liên hệ: 098.999.9999</p>
+</footer>
+
+<script>
+const API_URL = "http://localhost:3000/api/news";
+let currentPage = 1;
+const perPage = 6;
+
+// ===== HÀM CHUYỂN ẢNH TỪ DB SANG BASE64 HIỂN THỊ =====
+function getImageUrl(news) {
+  if (!news.image) return "https://via.placeholder.com/400x250?text=No+Image";
+
+  // Nếu ảnh là object hoặc có data BLOB → chuyển base64
+  if (news.image.data) {
+    const base64String = `data:image/jpeg;base64,${arrayBufferToBase64(news.image.data)}`;
+    return base64String;
+  }
+
+  // Nếu ảnh là base64 string sẵn trong DB
+  if (typeof news.image === "string" && news.image.startsWith("data:image")) {
+    return news.image;
+  }
+
+  // Nếu là đường dẫn tương đối (từ /uploads)
+  if (typeof news.image === "string" && news.image.startsWith("/uploads")) {
+    return `http://localhost:3000${news.image}`;
+  }
+
+  // Còn lại (link trực tiếp hoặc lạ)
+  return news.image;
+}
+
+// ===== CHUYỂN ArrayBuffer -> Base64 =====
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) binary += String.fromCharCode(bytes[i]);
+  return window.btoa(binary);
+}
+
+// ===== TIN NỔI BẬT =====
+async function loadFeaturedNews() {
+  try {
+    const res = await fetch(API_URL);
+    const newsList = await res.json();
+    if (!newsList || newsList.length === 0) return;
+
+    const published = newsList.filter(n => n.status === 'published');
+    if (published.length === 0) return;
+
+    const featured = published[0];
+    const imageUrl = getImageUrl(featured);
+
+    document.querySelector(".featured-news-card").innerHTML = `
+      <div class="featured-img">
+        <img src="${imageUrl}" alt="${featured.title}">
+      </div>
+      <div class="featured-content">
+        <span class="featured-tag">NỔI BẬT</span>
+        <h3>${featured.title}</h3>
+        <p>${featured.summary || (featured.content ? featured.content.substring(0, 250) + "..." : "")}</p>
+        <a href="#" onclick="viewDetail(${featured.id}); return false;">Xem chi tiết <i class="fas fa-arrow-right"></i></a>
+      </div>`;
+  } catch (err) {
+    console.error("❌ Lỗi tải tin nổi bật:", err);
+  }
+}
+
+// ===== DANH SÁCH TIN (PHÂN TRANG) =====
+async function loadNews(api = API_URL, page = 1) {
+  try {
+    const res = await fetch(api);
+    const allNews = await res.json();
+
+    const published = allNews.filter(n => n.status === 'published');
+    const container = document.getElementById("news-grid-container");
+    container.innerHTML = "";
+
+    if (published.length === 0) {
+      container.innerHTML = "<p style='text-align:center;'>Chưa có tin tức nào.</p>";
+      document.querySelector(".pagination").style.display = "none";
+      return;
+    }
+
+    const currentCategory = document.querySelector(".category-btn.active")?.textContent.trim();
+    const list = currentCategory === "Tất cả" ? published.slice(1) : published.filter(n => n.category === currentCategory);
+
+    const totalPages = Math.ceil(list.length / perPage);
+    const start = (page - 1) * perPage;
+    const pageData = list.slice(start, start + perPage);
+
+    for (const news of pageData) {
+      const imageUrl = getImageUrl(news);
+      const date = new Date(news.created_at || Date.now()).toLocaleDateString("vi-VN");
+      container.innerHTML += `
+        <div class="news-card">
+          <img src="${imageUrl}" alt="${news.title}">
+          <div class="news-card-content">
+            <span class="news-date"><i class="far fa-calendar-alt"></i> ${date}</span>
+            <h3>${news.title}</h3>
+            <p>${news.summary || (news.content ? news.content.substring(0, 120) + "...": "")}</p>
+            <a href="#" onclick="viewDetail(${news.id}); return false;">Đọc thêm <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>`;
+    }
+
+    renderPagination(totalPages, page, api);
+  } catch (err) {
+    console.error("❌ Lỗi tải danh sách tin:", err);
+  }
+}
+
+// ===== PHÂN TRANG =====
+function renderPagination(totalPages, currentPage, api) {
+  const pagination = document.querySelector(".pagination");
+  pagination.innerHTML = `
+    <a href="#" class="page-link" data-page="prev"><i class="fas fa-angle-left"></i></a>
+    ${Array.from({length: totalPages}, (_, i) =>
+      `<a href="#" class="page-link ${i+1===currentPage?"active":""}" data-page="${i+1}">${i+1}</a>`
+    ).join("")}
+    <a href="#" class="page-link" data-page="next"><i class="fas fa-angle-right"></i></a>`;
+
+  pagination.querySelectorAll(".page-link").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      const type = btn.dataset.page;
+      if (type === "prev" && currentPage > 1) currentPage--;
+      else if (type === "next" && currentPage < totalPages) currentPage++;
+      else if (!isNaN(type)) currentPage = parseInt(type);
+      loadNews(api, currentPage);
+    });
+  });
+}
+
+// ===== LỌC DANH MỤC =====
+async function loadByCategory(category) {
+  const featuredSection = document.querySelector(".featured-news-card");
+  if (category === "Tất cả") {
+    featuredSection.style.display = "flex";
+    await loadFeaturedNews();
+    await loadNews(API_URL, 1);
+  } else {
+    featuredSection.style.display = "none";
+    const url = `${API_URL}/category/${encodeURIComponent(category)}`;
+    await loadNews(url, 1);
+  }
+}
+
+// ===== XEM CHI TIẾT =====
+function viewDetail(id) {
+  localStorage.setItem("selectedNewsId", id);
+  window.location.href = "news-detail.html";
+}
+
+// ===== KHỞI ĐỘNG =====
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadFeaturedNews();
+  await loadNews(API_URL, 1);
+
+  document.querySelectorAll(".category-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".category-btn").forEach(b => b.classList.remove("active"));
+      this.classList.add("active");
+      loadByCategory(this.textContent.trim());
+    });
+  });
+});
+</script>
+</body>
+</html>

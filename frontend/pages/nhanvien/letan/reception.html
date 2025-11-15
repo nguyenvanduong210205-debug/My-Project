@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏥 Lễ tân - Quản lý hồ sơ bệnh nhân</title>
+  <style>
+    body { font-family: "Segoe UI", sans-serif; background-color: #f4f6fa; margin: 0; padding: 0; }
+    header {
+      background-color: #0066cc; color: #fff; display: flex; justify-content: space-between;
+      align-items: center; padding: 1rem 2rem; font-size: 1.4rem; font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .user-menu { position: relative; }
+    .user-btn {
+      background: transparent; border: none; color: #fff; font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+    .user-btn:hover { background: rgba(255,255,255,0.15); }
+    .dropdown-content {
+      display: none; position: absolute; right: 0; top: 120%; background: #fff; border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 180px; z-index: 1000;
+    }
+    .dropdown-content button {
+      display: flex; align-items: center; gap: 8px; width: 100%; border: none; background: none;
+      padding: 10px 16px; font-size: 1rem; color: #333; cursor: pointer; transition: all 0.25s ease;
+    }
+    .dropdown-content button:hover { background-color: #f2f6ff; color: #0056b3; }
+    .container { width: 90%; margin: 20px auto; background: white; padding: 20px; border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    h2 { color: #333; border-left: 5px solid #0066cc; padding-left: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 15px; }
+    .full { grid-column: 1 / -1; }
+    input, select, textarea {
+      width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;
+    }
+    button.btn-primary {
+      background-color: #007bff; color: white; border: none; padding: 10px 20px;
+      border-radius: 6px; cursor: pointer; transition: background 0.3s;
+    }
+    button.btn-primary:hover { background-color: #0056b3; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    table th, table td { padding: 8px; border: 1px solid #ddd; text-align: center; }
+    table th { background-color: #0066cc; color: white; }
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 2000;
+    }
+    .modal-content {
+      background: white; padding: 20px; border-radius: 10px; width: 400px; text-align: left;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    }
+    .close-btn { float: right; font-size: 18px; cursor: pointer; color: red; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🏥 HỆ THỐNG LỄ TÂN - QUẢN LÝ HỒ SƠ KHÁM</div>
+    <div class="user-menu">
+      <button id="userToggle" class="user-btn">👤 Tôi ▾</button>
+      <div id="userDropdown" class="dropdown-content">
+        <button onclick="showReceptionInfo()">🧾 Thông tin lễ tân</button>
+        <button onclick="changePassword()">🔑 Đổi mật khẩu</button>
+        <button onclick="logout()">🚪 Đăng xuất</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="form-section">
+      <h2>📋 Tạo Hồ Sơ & Đặt Lịch Khám</h2>
+      <form id="form-hoso">
+        <div class="grid">
+          <div><label>Họ tên</label><input id="ho_ten" required></div>
+          <div><label>Giới tính</label>
+            <select id="gioi_tinh">
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+            </select>
+          </div>
+          <div><label>Ngày sinh</label><input type="date" id="ngay_sinh" required></div>
+          <div><label>Số điện thoại</label><input id="phone" required></div>
+          <div><label>Email</label><input type="email" id="email"></div>
+          <div><label>Địa chỉ</label><input id="dia_chi"></div>
+
+          <div><label>Khoa khám</label><select id="id_khoa" required></select></div>
+          <div><label>Ngày khám</label><input type="date" id="ngay_kham" required></div>
+          <div><label>Ca khám</label>
+            <select id="ca_kham" required>
+              <option value="">-- Chọn ca --</option>
+              <option value="Sang">Sáng</option>
+              <option value="Chieu">Chiều</option>
+            </select>
+          </div>
+          <div><label>Bác sĩ</label><select id="id_bacsi" required><option>-- Chọn khoa, ngày & ca --</option></select></div>
+
+          <div><label>Trạng thái</label>
+            <select id="trang_thai" required>
+              <option value="CHO_XAC_NHAN">Chờ xác nhận</option>
+              <option value="DA_TAO_HOSO">Đã tạo hồ sơ</option>
+              <option value="HOAN_THANH">Hoàn thành</option>
+            </select>
+          </div>
+
+          <div class="full"><label>Lý do khám</label><textarea id="ly_do"></textarea></div>
+        </div>
+        <button class="btn-primary" type="submit">➕ Tạo hồ sơ & đặt lịch</button>
+      </form>
+    </section>
+
+    <section class="list-section">
+      <h2>🕒 Danh Sách Đặt Lịch</h2>
+      <table id="tableDatLich">
+        <thead><tr><th>Tên</th><th>SĐT</th><th>Khoa</th><th>Bác sĩ</th><th>Ngày</th><th>Trạng thái</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="list-section">
+      <h2>📑 Hồ Sơ Khám</h2>
+      <table id="tableHoSo">
+        <thead><tr><th>Mã</th><th>Bệnh nhân</th><th>Bác sĩ</th><th>Triệu chứng</th><th>Chuẩn đoán</th><th>Trạng thái</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Modal hiển thị thông tin lễ tân -->
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <div id="infoContent"></div>
+    </div>
+  </div>
+
+<script>
+const API_URL = "http://localhost:3000/api";
+
+// ===== HELPERS: ngày hôm nay dạng yyyy-mm-dd =====
+function todayIsoDate() {
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  return d.toISOString().split("T")[0];
+}
+
+// ===== SET MIN DATE CHO input#ngay_kham =====
+function setMinDateForNgayKham() {
+  const input = document.getElementById("ngay_kham");
+  const today = todayIsoDate();
+  input.min = today;
+  if (!input.value) input.value = today;
+}
+
+// ===== MENU =====
+const userToggle = document.getElementById('userToggle');
+const userDropdown = document.getElementById('userDropdown');
+userToggle.onclick = () => userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+window.onclick = (e) => { if (!e.target.closest(".user-menu")) userDropdown.style.display = "none"; };
+
+function logout() {
+  localStorage.clear();
+  window.location.href = "../login.html";
+}
+function changePassword(){ alert("🔐 Chức năng đổi mật khẩu đang phát triển."); }
+
+// ===== THÔNG TIN LỄ TÂN (dùng user.id theo bạn xác nhận) =====
+async function showReceptionInfo() {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const id = user?.id;
+  if (!id) {
+    alert("Không tìm thấy tài khoản đăng nhập!");
+    return;
+  }
+  try {
+    const res = await fetch(`${API_URL}/datlichletan/letan/${id}`);
+    const data = await res.json();
+    if (!data || data.message) {
+      alert("❌ " + (data.message || "Không tìm thấy thông tin lễ tân."));
+      return;
+    }
+    document.getElementById("infoContent").innerHTML = `
+      <h3>📋 Thông tin Lễ Tân</h3>
+      <p><b>Họ tên:</b> ${data.ho_ten}</p>
+      <p><b>Điện thoại:</b> ${data.phone}</p>
+      <p><b>Email:</b> ${data.email || "Chưa cập nhật"}</p>
+      <p><b>Địa chỉ:</b> ${data.diachi || "Chưa cập nhật"}</p>
+      <p><b>Tài khoản:</b> ${data.username || (user.username || "Chưa rõ")}</p>
+    `;
+    openModal();
+  } catch (err) {
+    console.error("Lỗi khi tải thông tin lễ tân:", err);
+    alert("Không thể tải thông tin lễ tân từ server!");
+  }
+}
+
+// ===== LOAD KHOA =====
+async function loadKhoa(){
+  try {
+    const res = await fetch(`${API_URL}/khoa`);
+    const data = await res.json();
+    document.getElementById("id_khoa").innerHTML =
+      '<option value="">-- Chọn khoa --</option>' +
+      data.map(k => `<option value="${k.id_khoa}">${k.ten_khoa}</option>`).join("");
+  } catch (err) {
+    console.error("Lỗi loadKhoa:", err);
+  }
+}
+
+// ===== LOAD BÁC SĨ THEO KHOA + NGÀY + CA =====
+document.getElementById("id_khoa").addEventListener("change", loadDoctors);
+document.getElementById("ngay_kham").addEventListener("change", loadDoctors);
+document.getElementById("ca_kham").addEventListener("change", loadDoctors);
+
+async function loadDoctors() {
+  const idKhoa = document.getElementById("id_khoa").value;
+  const ca = document.getElementById("ca_kham").value;
+  const ngay = document.getElementById("ngay_kham").value;
+  const sel = document.getElementById("id_bacsi");
+
+  if (!idKhoa || !ca || !ngay) {
+    sel.innerHTML = '<option>-- Chọn khoa, ngày & ca --</option>';
+    return;
+  }
+
+  sel.innerHTML = '<option>Đang tải...</option>';
+  try {
+    const formattedNgay = new Date(ngay).toISOString().split("T")[0];
+    const res = await fetch(`${API_URL}/datlichletan/filter/doctors?id_khoa=${idKhoa}&ngay=${formattedNgay}&ca=${ca}`);
+    const list = await res.json();
+
+    if (!Array.isArray(list) || list.length === 0) {
+      sel.innerHTML = '<option>Không có bác sĩ làm việc trong ca này</option>';
+      return;
+    }
+
+    sel.innerHTML = list.map(b => `<option value="${b.id_bacsi}">${b.ho_ten} ${b.hoc_vi ? '- '+b.hoc_vi : ''}</option>`).join("");
+  } catch (err) {
+    console.error("Lỗi loadDoctors:", err);
+    sel.innerHTML = '<option>Lỗi tải danh sách bác sĩ</option>';
+  }
+}
+
+// ===== TẠO HỒ SƠ =====
+document.getElementById("form-hoso").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+
+  // Validate ngày: ngăn chọn ngày quá khứ
+  const ngayKham = document.getElementById("ngay_kham").value;
+  const today = todayIsoDate();
+  if (!ngayKham) {
+    alert("Vui lòng chọn ngày khám.");
+    return;
+  }
+  if (ngayKham < today) {
+    alert("Không thể chọn ngày trong quá khứ. Vui lòng chọn ngày hôm nay hoặc tương lai.");
+    return;
+  }
+
+  const data = {
+    ho_ten: ho_ten.value, gioi_tinh: gioi_tinh.value, ngay_sinh: ngay_sinh.value,
+    phone: phone.value, email: email.value, dia_chi: dia_chi.value,
+    id_khoa: id_khoa.value, id_bacsi: id_bacsi.value,
+    ngay: ngayKham, ca_kham: ca_kham.value,
+    ly_do: ly_do.value, trang_thai: trang_thai.value
+  };
+
+  try {
+    const res = await fetch(`${API_URL}/datlichletan/create`, {
+      method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      alert(result.message || result.error || "Đã có lỗi khi tạo hồ sơ & đặt lịch");
+      return;
+    }
+    alert(result.message || "Đã tạo hồ sơ thành công!");
+    loadDatLich(); loadHoSo();
+  } catch (err) {
+    console.error("Lỗi khi gửi yêu cầu tạo:", err);
+    alert("Không thể kết nối tới server.");
+  }
+});
+
+// ===== LOAD DANH SÁCH =====
+function getTrangThaiColor(status) {
+  switch(status){
+    case "CHO_XAC_NHAN": return "color: orange; font-weight:bold;";
+    case "DA_TAO_HOSO": return "color: green; font-weight:bold;";
+    case "HOAN_THANH": return "color: blue; font-weight:bold;";
+    default: return "";
+  }
+}
+
+async function loadDatLich(){
+  try {
+    const res = await fetch(`${API_URL}/datlichletan`);
+    const data = await res.json();
+    const tbody = document.querySelector("#tableDatLich tbody");
+    tbody.innerHTML = data.map(d => `
+      <tr>
+        <td>${d.ten_benhnhan}</td>
+        <td>${d.sdt}</td><td>${d.ten_khoa}</td>
+        <td>${d.ten_bacsi || ''}</td>
+        <td>${d.ngay}</td><td style="${getTrangThaiColor(d.trang_thai)}">${d.trang_thai}</td>
+      </tr>`).join("");
+  } catch (err) {
+    console.error("Lỗi loadDatLich:", err);
+  }
+}
+
+async function loadHoSo(){
+  try {
+    const res = await fetch(`${API_URL}/hoso`);
+    const data = await res.json();
+    const tbody = document.querySelector("#tableHoSo tbody");
+    tbody.innerHTML = data.map(h => `
+      <tr>
+        <td>${h.id_hoso}</td><td>${h.ten_benhnhan}</td><td>${h.ten_bacsi}</td>
+        <td>${h.trieu_chung || ''}</td><td>${h.chuan_doan || ''}</td><td>${h.trang_thai}</td>
+      </tr>`).join("");
+  } catch (err) {
+    console.error("Lỗi loadHoSo:", err);
+  }
+}
+
+// ===== MODAL =====
+function openModal(){ document.getElementById("infoModal").style.display = "flex"; }
+function closeModal(){ document.getElementById("infoModal").style.display = "none"; }
+
+// ===== KHỞI ĐỘNG =====
+setMinDateForNgayKham();
+loadKhoa();
+loadDatLich();
+loadHoSo();
+</script>
+</body>
+</html>

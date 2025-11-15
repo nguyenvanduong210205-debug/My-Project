@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phân công lịch làm việc - DHST Hospital</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+  :root{
+    --primary:#2563eb; --accent:#38bdf8; --bg:#f9fafb; --card:#fff;
+    --text:#1e293b; --muted:#6b7280; --radius:14px; --shadow:0 10px 30px rgba(0,0,0,0.08);
+  }
+  *{box-sizing:border-box;font-family:"Inter",sans-serif;margin:0;padding:0;}
+  body{display:flex;min-height:100vh;background:var(--bg);color:var(--text);}
+  
+  /* Sidebar */
+  .sidebar{
+    width:240px;background:#1e293b;color:#fff;display:flex;flex-direction:column;
+    padding:24px 16px;box-shadow:2px 0 8px rgba(0,0,0,0.1);
+  }
+  .brand{font-size:22px;font-weight:700;margin-bottom:30px;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;}
+  .nav a{
+    display:flex;align-items:center;gap:10px;color:#cbd5e1;
+    text-decoration:none;padding:12px 14px;border-radius:10px;transition:all .25s;
+  }
+.submenu-group { display:flex; flex-direction:column; }
+.submenu { display:none; flex-direction:column; margin-left:24px; margin-top:4px; }
+.submenu a {
+  font-size:14px; color:#cbd5e1; padding:10px 12px;
+  border-radius:8px; transition:all .25s;
+}
+.submenu a:hover { background:rgba(255,255,255,0.1); color:#fff; transform:translateX(4px); }
+.submenu.show { display:flex; }
+  .nav a:hover,.nav a.active{background:var(--primary);color:#fff;transform:translateX(4px);}
+  .nav a i{width:20px;text-align:center;}
+  
+  /* Main */
+  .main{flex:1;padding:32px;overflow:auto;}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
+  header h1{font-size:26px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:10px;}
+  header .small{color:var(--muted);}
+  
+  /* Card */
+  .card{
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:26px;margin-bottom:30px;animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  
+  /* Controls */
+  .controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:20px;}
+  label{font-weight:600;font-size:14px;}
+  select{
+    padding:10px 14px;border:1px solid #e2e8f0;border-radius:10px;
+    font-size:14px;transition:all .2s;background:#fff;
+  }
+  select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.15);outline:none;}
+  
+  /* Button */
+  .btn{
+    background:var(--primary);color:#fff;padding:10px 18px;border:none;
+    border-radius:10px;font-weight:600;cursor:pointer;transition:all .25s;
+  }
+  .btn:hover{opacity:.9;transform:translateY(-2px);}
+  .btn-gray{background:#6b7280;}
+  .btn-yellow{background:#f59e0b;}
+  .btn-green{background:#16a34a;}
+  
+  /* Table */
+  table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden;}
+  thead th{background:linear-gradient(90deg,var(--primary),#1e40af);color:#fff;padding:12px;text-align:center;}
+  tbody td{padding:12px;text-align:center;border-bottom:1px solid #f1f5f9;background:#fff;}
+  tr:hover td{background:#f9fafb;}
+  .cell{border-radius:8px;cursor:pointer;transition:all .25s;}
+  .cell:hover{background:#eff6ff;}
+  .muted{color:#9ca3af;}
+  
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;
+    align-items:center;justify-content:center;z-index:80;}
+  .overlay.show{display:flex;}
+.modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  width: 420px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  animation: scaleIn 0.3s ease;
+}
+@keyframes scaleIn {
+  from {opacity: 0;transform: scale(0.95);}
+  to {opacity: 1;transform: scale(1);}
+}
+.modal h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+#searchDoctor {
+  width: 100%;
+  padding: 12px 14px 12px 40px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb url('https://cdn-icons-png.flaticon.com/512/622/622669.png') 10px center / 18px no-repeat;
+  font-size: 14px;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+}
+#searchDoctor:focus {
+  background-color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  outline: none;
+}
+#doctorList {
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+  padding: 8px;
+  margin-bottom: 16px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+#doctorList label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #fff;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.25s;
+  border: 1px solid transparent;
+}
+#doctorList label:hover {
+  background: #eff6ff;
+  border-color: #c7d2fe;
+}
+#doctorList input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+.modal .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.modal .btn {
+  border-radius: 10px;
+  font-size: 15px;
+  padding: 10px 18px;
+}
+  
+  /* Toast */
+  .toast-wrap{position:fixed;right:24px;top:24px;z-index:90;display:flex;flex-direction:column;gap:10px;}
+  .toast{background:#fff;padding:12px 16px;border-left:6px solid;border-radius:12px;box-shadow:var(--shadow);}
+  .toast.success{border-color:#16a34a;}
+  .toast.error{border-color:#ef4444;}
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><i class="fas fa-hospital"></i> DHST Hospital</div>
+    <nav class="nav">
+      <a href="manage.account.html"><i class="fas fa-user-cog"></i> Quản lý tài khoản</a>
+      <div class="submenu-group">
+        <a href="#" id="toggleNhanVien"><i class="fas fa-user-friends"></i> Quản lý nhân viên 
+          <i class="fas fa-chevron-down" style="margin-left:auto;font-size:12px;"></i></a>
+        <div id="submenuNhanVien" class="submenu">
+          <a href="manage.bacsi.html"><i class="fas fa-user-md"></i> Quản lý bác sĩ</a>
+          <a href="manage.letan.html"><i class="fas fa-concierge-bell"></i> Quản lý lễ tân</a>
+        </div>
+      </div>
+      <a href="manage.lichlamviec.html" class="active"><i class="fas fa-calendar-alt"></i> Quản lý lịch làm việc</a>
+      <a href="manage.news.html"><i class="fas fa-newspaper"></i> Quản lý bài viết</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header>
+      <h1><i class="fas fa-calendar-days"></i> Phân công lịch làm việc</h1>
+      <div class="small">Xin chào, Admin 👋</div>
+    </header>
+
+    <section class="card">
+      <div class="controls">
+        <label>Khoa:</label><select id="khoaSelect"></select>
+        <label>Tháng:</label><select id="thangSelect"></select>
+        <label>Năm:</label><select id="namSelect"></select>
+        <button id="btnEdit" class="btn btn-yellow" style="display:none;"><i class="fas fa-pen"></i> Chỉnh sửa</button>
+        <button id="btnSave" class="btn" style="display:none;"><i class="fas fa-save"></i> Lưu</button>
+        <button id="btnCancel" class="btn btn-gray" style="display:none;"><i class="fas fa-xmark"></i> Hủy</button>
+      </div>
+      <div id="scheduleContainer"></div>
+    </section>
+  </main>
+
+  <!-- Modal chọn bác sĩ -->
+  <div id="doctorModal" class="overlay">
+    <div class="modal">
+      <h3><i class="fas fa-user-md"></i> Chọn bác sĩ cho <span id="modalTitle"></span></h3>
+      <input id="searchDoctor" placeholder="🔍 Tìm bác sĩ...">
+      <div id="doctorList"></div>
+      <div class="actions">
+        <button id="btnCloseModal" class="btn btn-gray">Đóng</button>
+        <button id="btnConfirmDoctor" class="btn">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toasts" class="toast-wrap"></div>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const API_BASE = "http://localhost:3000/api";
+  const khoaSelect = document.getElementById("khoaSelect");
+  const thangSelect = document.getElementById("thangSelect");
+  const namSelect = document.getElementById("namSelect");
+  const scheduleContainer = document.getElementById("scheduleContainer");
+  const btnEdit = document.getElementById("btnEdit");
+  const btnSave = document.getElementById("btnSave");
+  const btnCancel = document.getElementById("btnCancel");
+  const doctorModal = document.getElementById("doctorModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const doctorList = document.getElementById("doctorList");
+  const btnCloseModal = document.getElementById("btnCloseModal");
+  const btnConfirmDoctor = document.getElementById("btnConfirmDoctor");
+  const toasts = document.getElementById("toasts");
+
+  let allDoctors = [], currentSchedule = [], isEditing = false, currentCell = null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  function showToast(msg, type = "success") {
+    const t = document.createElement("div");
+    t.className = "toast " + type;
+    t.innerHTML = `<strong>${type === "success" ? "Thành công" : "Lỗi"}</strong><div>${msg}</div>`;
+    toasts.appendChild(t);
+    setTimeout(() => (t.style.opacity = 0), 2500);
+    setTimeout(() => t.remove(), 3000);
+  }
+
+  async function loadKhoa() {
+    const res = await fetch(API_BASE + "/khoa");
+    const data = await res.json();
+    khoaSelect.innerHTML = data.map(k => `<option value="${k.id_khoa}">${k.ten_khoa}</option>`).join("");
+    await loadSchedule();
+  }
+
+  function initThangNam() {
+    const now = new Date();
+    for (let i = 1; i <= 12; i++)
+      thangSelect.innerHTML += `<option value="${i}" ${i === now.getMonth() + 1 ? "selected" : ""}>${i}</option>`;
+    for (let y = now.getFullYear() - 1; y <= now.getFullYear() + 1; y++)
+      namSelect.innerHTML += `<option value="${y}" ${y === now.getFullYear() ? "selected" : ""}>${y}</option>`;
+  }
+
+  async function loadSchedule() {
+    const id_khoa = khoaSelect.value;
+    const tenKhoa = khoaSelect.selectedOptions[0]?.text || "";
+    const thang = thangSelect.value;
+    const nam = namSelect.value;
+    if (!id_khoa) return;
+
+    const [resBacsi, resLich] = await Promise.all([
+      fetch(API_BASE + "/listdoctor"),
+      fetch(`${API_BASE}/lichlamviec?id_khoa=${id_khoa}&thang=${thang}&nam=${nam}`)
+    ]);
+    const all = await resBacsi.json();
+    allDoctors = all.filter(b => b.ten_khoa?.trim() === tenKhoa.trim());
+    const lich = await resLich.json();
+    currentSchedule = lich;
+    renderSchedule(lich);
+  }
+
+  function renderSchedule(lich) {
+    const days = new Date(namSelect.value, thangSelect.value, 0).getDate();
+    let html = `<table>
+      <thead><tr><th>Ngày</th><th>Ca sáng</th><th>Ca chiều</th></tr></thead><tbody>`;
+
+    for (let d = 1; d <= days; d++) {
+      const dateStr = `${namSelect.value}-${String(thangSelect.value).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      const dateObj = new Date(dateStr);
+      const sang = lich.filter(l => l.ngay.startsWith(dateStr) && l.ca === "Sang");
+      const chieu = lich.filter(l => l.ngay.startsWith(dateStr) && l.ca === "Chieu");
+
+      html += `<tr>
+        <td>${d}</td>
+        <td class="cell" 
+            data-ngay="${dateStr}" 
+            data-ca="Sang" 
+            data-ids="${sang.map(l => l.id_bacsi).join(",")}"
+            data-editable="${dateObj >= today ? "true" : "false"}">
+            ${renderCell(sang.map(l => l.ho_ten), dateObj < today)}</td>
+        <td class="cell" 
+            data-ngay="${dateStr}" 
+            data-ca="Chieu" 
+            data-ids="${chieu.map(l => l.id_bacsi).join(",")}"
+            data-editable="${dateObj >= today ? "true" : "false"}">
+            ${renderCell(chieu.map(l => l.ho_ten), dateObj < today)}</td>
+      </tr>`;
+    }
+
+    html += `</tbody></table>`;
+    scheduleContainer.innerHTML = html;
+    btnEdit.style.display = "inline-block";
+    btnSave.style.display = btnCancel.style.display = "none";
+    attachCellEvents();
+  }
+
+  function renderCell(names, isPast) {
+    if (names.length) return names.join("<br>");
+    return isPast
+      ? `<span class="muted">— Không phân công —</span>`
+      : `<span class="muted">+ Thêm bác sĩ</span>`;
+  }
+
+  function attachCellEvents() {
+    document.querySelectorAll(".cell").forEach(c => {
+      const editable = c.dataset.editable === "true";
+      if (isEditing && editable) {
+        c.onclick = () => openModal(c);
+        c.style.cursor = "pointer";
+        c.style.opacity = 1;
+      } else {
+        c.onclick = null;
+        c.style.cursor = editable ? "default" : "not-allowed";
+        if (!editable) c.style.opacity = 0.6;
+      }
+    });
+  }
+
+  function openModal(cell) {
+    currentCell = cell;
+    const ids = cell.dataset.ids ? cell.dataset.ids.split(",") : [];
+    modalTitle.textContent = `${cell.dataset.ca === "Sang" ? "Ca sáng" : "Ca chiều"} - ${cell.dataset.ngay}`;
+    doctorList.innerHTML = allDoctors
+      .map(
+        b =>
+          `<label><input type="checkbox" value="${b.id_bacsi}" ${
+            ids.includes(b.id_bacsi) ? "checked" : ""
+          }> ${b.ho_ten}</label>`
+      )
+      .join("");
+    doctorModal.classList.add("show");
+  }
+
+  function closeModal() {
+    doctorModal.classList.remove("show");
+  }
+
+  function confirmDoctorSelection() {
+    const checked = [...doctorList.querySelectorAll("input:checked")].map(i => i.value);
+    const names = allDoctors.filter(b => checked.includes(b.id_bacsi)).map(b => b.ho_ten);
+    currentCell.innerHTML = renderCell(names, false);
+    currentCell.dataset.ids = checked.join(",");
+    currentCell.dataset.changed = "true";
+    closeModal();
+  }
+
+  async function saveSchedule() {
+    const id_khoa = khoaSelect.value;
+    const mapOld = {};
+    currentSchedule.forEach(lv => {
+      const key = `${lv.ngay}_${lv.ca}`;
+      (mapOld[key] = mapOld[key] || []).push(lv.id_bacsi);
+    });
+
+    const data = [...document.querySelectorAll(".cell")].map(c => {
+      const key = `${c.dataset.ngay}_${c.dataset.ca}`;
+      const ids = c.dataset.changed
+        ? c.dataset.ids
+          ? c.dataset.ids.split(",")
+          : []
+        : mapOld[key] || [];
+      return { id_khoa, ngay: c.dataset.ngay, ca: c.dataset.ca, id_bacsi: ids };
+    });
+
+    await fetch(API_BASE + "/lichlamviec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    showToast("Đã lưu lịch làm việc!");
+    isEditing = false;
+
+    // Bật lại chọn dropdown khi lưu xong
+    khoaSelect.disabled = thangSelect.disabled = namSelect.disabled = false;
+
+    btnEdit.style.display = "inline-block";
+    btnSave.style.display = btnCancel.style.display = "none";
+    await loadSchedule();
+  }
+
+  // EVENTS
+  khoaSelect.addEventListener("change", loadSchedule);
+  thangSelect.addEventListener("change", loadSchedule);
+  namSelect.addEventListener("change", loadSchedule);
+
+  btnEdit.onclick = () => {
+    isEditing = true;
+    btnEdit.style.display = "none";
+    btnSave.style.display = btnCancel.style.display = "inline-block";
+
+    // 🚫 Khóa các select trong lúc chỉnh sửa
+    khoaSelect.disabled = thangSelect.disabled = namSelect.disabled = true;
+
+    attachCellEvents();
+  };
+
+  btnCancel.onclick = () => {
+    isEditing = false;
+
+    // ✅ Mở lại chọn dropdown khi hủy chỉnh sửa
+    khoaSelect.disabled = thangSelect.disabled = namSelect.disabled = false;
+
+    btnEdit.style.display = "inline-block";
+    btnSave.style.display = btnCancel.style.display = "none";
+    attachCellEvents();
+  };
+
+  btnSave.onclick = saveSchedule;
+  btnCloseModal.onclick = closeModal;
+  btnConfirmDoctor.onclick = confirmDoctorSelection;
+
+  // submenu toggle
+  const toggleNhanVien = document.getElementById("toggleNhanVien");
+  const submenuNhanVien = document.getElementById("submenuNhanVien");
+  toggleNhanVien.onclick = e => {
+    e.preventDefault();
+    submenuNhanVien.classList.toggle("show");
+  };
+
+  loadKhoa();
+  initThangNam();
+});
+</script>
+</body>
+</html>

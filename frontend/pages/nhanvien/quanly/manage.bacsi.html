@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý bác sĩ - DHST Hospital</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+  :root{
+    --primary:#2563eb; --accent:#38bdf8; --bg:#f9fafb; --card:#fff;
+    --text:#1e293b; --muted:#6b7280; --radius:14px; --shadow:0 10px 30px rgba(0,0,0,0.08);
+  }
+  *{box-sizing:border-box;font-family:"Inter",sans-serif;margin:0;padding:0;}
+  body{display:flex;min-height:100vh;background:var(--bg);color:var(--text);}
+  
+  .sidebar{width:240px;background:#1e293b;color:#fff;display:flex;flex-direction:column;
+    padding:24px 16px;box-shadow:2px 0 8px rgba(0,0,0,0.1);}
+  .brand{font-size:22px;font-weight:700;margin-bottom:30px;text-align:center;
+    display:flex;align-items:center;justify-content:center;gap:10px;}
+  .nav a{display:flex;align-items:center;gap:10px;color:#cbd5e1;text-decoration:none;
+    padding:12px 14px;border-radius:10px;transition:all .25s;}
+  .submenu-group{display:flex;flex-direction:column;}
+  .submenu{display:none;flex-direction:column;margin-left:24px;margin-top:4px;}
+  .submenu a{font-size:14px;color:#cbd5e1;padding:10px 12px;border-radius:8px;transition:all .25s;}
+  .submenu a:hover{background:rgba(255,255,255,0.1);color:#fff;transform:translateX(4px);}
+  .submenu.show{display:flex;}
+  .nav a:hover,.nav a.active{background:var(--primary);color:#fff;transform:translateX(4px);}
+  .nav a i{width:20px;text-align:center;}
+  
+  .main{flex:1;padding:32px;overflow:auto;}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
+  header h1{font-size:26px;font-weight:700;color:var(--primary);
+    display:flex;align-items:center;gap:10px;}
+  header .small{color:var(--muted);}
+  
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:26px;margin-bottom:30px;animation:fadeIn .4s ease;}
+  .card h2{font-size:18px;color:var(--text);display:flex;align-items:center;gap:10px;}
+  .card h2 i{color:var(--primary);}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  
+  .table-wrap{overflow-x:auto;margin-top:16px;}
+  table{width:100%;border-collapse:collapse;}
+  thead th{background:linear-gradient(90deg,var(--primary),#1e40af);color:#fff;
+    padding:12px 16px;text-align:left;font-weight:600;}
+  tbody td{padding:12px 16px;border-bottom:1px solid #f1f5f9;}
+  tr:hover td{background:#f8fafc;}
+  
+  /* Thanh chức năng */
+  .card-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:10px;
+  }
+
+  .actions {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  select, input {
+    padding:10px 12px;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    font-size:14px;
+  }
+
+  select { min-width:180px; }
+  input { width:220px; }
+
+  .btn-search {
+    background:var(--primary);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:10px 14px;
+    cursor:pointer;
+    transition:.25s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .btn-search:hover { opacity:0.9; transform:translateY(-2px); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand"><i class="fas fa-hospital"></i> DHST Hospital</div>
+  <nav class="nav">
+    <a href="manage.account.html"><i class="fas fa-user-cog"></i> Quản lý tài khoản</a>
+    <div class="submenu-group">
+      <a href="#" id="toggleNhanVien" class="active">
+        <i class="fas fa-user-friends"></i> Quản lý nhân viên 
+        <i class="fas fa-chevron-down" style="margin-left:auto;font-size:12px;"></i>
+      </a>
+      <div id="submenuNhanVien" class="submenu show">
+        <a href="manage.bacsi.html" class="active"><i class="fas fa-user-md"></i> Quản lý bác sĩ</a>
+        <a href="manage.letan.html"><i class="fas fa-concierge-bell"></i> Quản lý lễ tân</a>
+      </div>
+    </div>
+    <a href="manage.lichlamviec.html"><i class="fas fa-calendar-alt"></i> Quản lý lịch làm việc</a>
+    <a href="manage.news.html"><i class="fas fa-newspaper"></i> Quản lý bài viết</a>
+  </nav>
+</aside>
+
+<main class="main">
+  <header>
+    <h1><i class="fas fa-user-md"></i> Quản lý bác sĩ</h1>
+    <div class="small">Xin chào, Admin 👋</div>
+  </header>
+
+  <section class="card">
+    <div class="card-header">
+      <h2><i class="fas fa-list"></i> Danh sách bác sĩ</h2>
+      <div class="actions">
+        <select id="filterKhoa">
+          <option value="">-- Tất cả khoa --</option>
+        </select>
+        <input id="searchInput" type="text" placeholder="Nhập mã hoặc tên bác sĩ...">
+        <button id="searchBtn" class="btn-search"><i class="fas fa-search"></i></button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:90px">Mã bác sĩ</th>
+            <th>Họ và tên</th>
+            <th>Khoa</th>
+            <th>Học vị</th>
+            <th>Chức vụ</th>
+          </tr>
+        </thead>
+        <tbody id="doctorTbody"><tr><td colspan="5">Đang tải...</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+const API_DOCTOR = "http://localhost:3000/api/listdoctor";
+const API_KHOA = "http://localhost:3000/api/khoa";
+
+const tbody = document.getElementById("doctorTbody");
+const searchInput = document.getElementById("searchInput");
+const filterKhoa = document.getElementById("filterKhoa");
+const searchBtn = document.getElementById("searchBtn");
+
+let allDoctors = [];
+
+// ====== Load danh sách khoa ======
+async function loadKhoa() {
+  try {
+    const res = await fetch(API_KHOA);
+    const list = await res.json();
+    list.forEach(k => {
+      const opt = document.createElement("option");
+      opt.value = k.ten_khoa;
+      opt.textContent = k.ten_khoa;
+      filterKhoa.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Lỗi khi tải khoa:", err);
+  }
+}
+
+// ====== Load danh sách bác sĩ ======
+async function loadDoctors() {
+  try {
+    const res = await fetch(API_DOCTOR);
+    const result = await res.json();
+    allDoctors = result.data || result || [];
+    renderDoctors(allDoctors);
+  } catch (err) {
+    console.error("Lỗi khi tải danh sách bác sĩ:", err);
+    tbody.innerHTML = `<tr><td colspan="5">Không thể tải dữ liệu.</td></tr>`;
+  }
+}
+
+// ====== Hiển thị danh sách ======
+function renderDoctors(list) {
+  tbody.innerHTML = "";
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="5">Không tìm thấy bác sĩ nào.</td></tr>`;
+    return;
+  }
+
+  list.forEach(bs => {
+    const id = bs.id_bacsi || "N/A";
+    const name = bs.hoten || bs.ho_ten || "N/A";
+    const dept = bs.tenkhoa || bs.ten_khoa || "N/A";
+    const degree = bs.hocvi || bs.hoc_vi || "N/A";
+    const position = bs.chucvu || bs.chuc_vu || "N/A";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${id}</td>
+      <td>${name}</td>
+      <td>${dept}</td>
+      <td>${degree}</td>
+      <td>${position}</td>`;
+    tr.style.cursor = "pointer";
+    tr.onclick = () => window.location.href = `chitiet.bacsi.html?id=${id}`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ====== Lọc theo khoa ======
+filterKhoa.addEventListener("change", () => {
+  const selected = filterKhoa.value;
+  if (selected === "") {
+    renderDoctors(allDoctors);
+  } else {
+    const filtered = allDoctors.filter(bs =>
+      (bs.tenkhoa || bs.ten_khoa || "").toLowerCase() === selected.toLowerCase()
+    );
+    renderDoctors(filtered);
+  }
+});
+
+// ====== Tìm kiếm (trong khoa hiện tại) ======
+function searchDoctors() {
+  const keyword = searchInput.value.trim().toLowerCase();
+  const selected = filterKhoa.value;
+
+  const filtered = allDoctors.filter(bs => {
+    const id = (bs.id_bacsi || "").toLowerCase();
+    const name = (bs.hoten || bs.ho_ten || "").toLowerCase();
+    const dept = (bs.tenkhoa || bs.ten_khoa || "").toLowerCase();
+    return (
+      (keyword === "" || id.includes(keyword) || name.includes(keyword)) &&
+      (selected === "" || dept === selected.toLowerCase())
+    );
+  });
+  renderDoctors(filtered);
+}
+
+searchBtn.addEventListener("click", searchDoctors);
+searchInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") searchDoctors();
+});
+
+// ====== Init ======
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadKhoa();
+  await loadDoctors();
+});
+
+// Toggle submenu
+document.getElementById("toggleNhanVien").onclick = e => {
+  e.preventDefault();
+  document.getElementById("submenuNhanVien").classList.toggle("show");
+};
+</script>
+</body>
+</html>
