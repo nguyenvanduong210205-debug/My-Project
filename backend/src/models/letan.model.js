@@ -10,9 +10,9 @@ const Letan = {
           id_letan,
           id_taikhoan,
           ho_ten,
+          ca_lam,
           phone,
-          email,
-          diachi
+          email
         FROM letan
         ORDER BY id_letan
       `;
@@ -32,9 +32,9 @@ const Letan = {
           id_letan,
           id_taikhoan,
           ho_ten,
+          ca_lam,
           phone,
-          email,
-          diachi
+          email
         FROM letan
         WHERE id_letan = ?
       `;
@@ -52,11 +52,11 @@ const Letan = {
       const sql = `
         UPDATE letan SET 
           phone = ?, 
-          email = ?, 
-          diachi = ?
+          email = ?,
+          ca_lam = ?
         WHERE id_letan = ?
       `;
-      const params = [data.phone || null, data.email || null, data.diachi || null, id_letan];
+      const params = [data.phone || null, data.email || null, data.ca_lam || null, id_letan];
       const [result] = await pool.query(sql, params);
       return result;
     } catch (err) {

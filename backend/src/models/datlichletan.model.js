@@ -87,7 +87,7 @@ const DatLichLeTanModel = {
   // ✳️ MỚI: Lấy thông tin lễ tân theo id_taikhoan (JOIN taikhoan)
   async getLeTanByTaiKhoan(id_taikhoan) {
     const [rows] = await db.query(`
-      SELECT l.id_letan, l.ho_ten, l.phone, l.email, l.diachi, t.username, t.id_taikhoan
+      SELECT l.id_letan, l.ho_ten, l.phone, l.email, l.ca_lam, t.username, t.id_taikhoan
       FROM letan l
       LEFT JOIN taikhoan t ON l.id_taikhoan = t.id_taikhoan
       WHERE l.id_taikhoan = ?
@@ -99,7 +99,7 @@ const DatLichLeTanModel = {
   // ✳️ Lọc bác sĩ theo khoa, ngày, ca (dựa trên lichlamviec + lichlamviec_bacsi)
   async getDoctorsBySchedule(id_khoa, ngay, ca) {
     const [rows] = await db.query(`
-      SELECT DISTINCT b.id_bacsi, b.ho_ten, b.hoc_vi, b.chuc_vu, b.phone, b.email, b.id_khoa
+      SELECT DISTINCT b.id_bacsi, b.ho_ten, b.hoc_vi, b.chuyen_mon, b.phone, b.email, b.id_khoa
       FROM bacsi b
       INNER JOIN lichlamviec_bacsi lb ON b.id_bacsi = lb.id_bacsi
       INNER JOIN lichlamviec ll ON ll.id_lichlamviec = lb.id_lichlamviec

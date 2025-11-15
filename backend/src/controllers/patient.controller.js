@@ -119,6 +119,29 @@ exports.getVisitDetails = async (req, res) => {
     }
 };
 
+// --- 5️⃣ Lấy chi tiết bệnh nhân theo ID ---
+exports.getPatientDetail = async (req, res) => {
+    const { id_benhnhan } = req.query;
+    
+    if (!id_benhnhan) {
+        return res.status(400).json({ message: 'Thiếu ID bệnh nhân.' });
+    }
+
+    try {
+        const BenhNhanModel = require('../models/benhnhan.model');
+        const patient = await BenhNhanModel.getById(id_benhnhan);
+        
+        if (!patient) {
+            return res.status(404).json({ message: 'Không tìm thấy bệnh nhân.' });
+        }
+
+        res.json({ data: patient });
+    } catch (err) {
+        console.error('Error getPatientDetail:', err);
+        res.status(500).json({ message: 'Lỗi hệ thống khi lấy chi tiết bệnh nhân.' });
+    }
+};
+
 // --- 5️⃣ Xuất PDF hồ sơ khám bệnh ---
 exports.downloadVisitPdf = async (req, res) => {
     const { lichKhamId } = req.params;

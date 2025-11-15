@@ -9,8 +9,8 @@ class DoctorDHSTModel {
     async findDoctorProfile(id_bacsi) {
         const [rows] = await this.pool.query(
             `SELECT 
-                b.ho_ten, b.hoc_vi, b.chuc_vu, b.chuyen_mon, 
-                b.nam_kinh_nghiem, b.email, b.phone, b.diachi, k.ten_khoa
+                b.ho_ten, b.hoc_vi, b.chuyen_mon, 
+                b.nam_kinh_nghiem, b.email, b.phone, k.ten_khoa
              FROM bacsi b
              LEFT JOIN khoa k ON b.id_khoa = k.id_khoa
              WHERE b.id_bacsi = ?`,
@@ -20,13 +20,32 @@ class DoctorDHSTModel {
     }
 
     async updateDoctorProfile(data) {
-        const { id_bacsi, ho_ten, hoc_vi, chuc_vu, chuyen_mon, nam_kinh_nghiem, email, phone, diachi } = data;
+        const { id_bacsi, ho_ten, hoc_vi, chuyen_mon, nam_kinh_nghiem, email, phone } = data;
+        
+        // Đảm bảo các giá trị không phải undefined
+        const updateData = {
+            ho_ten: ho_ten || null,
+            hoc_vi: hoc_vi || null,
+            chuyen_mon: chuyen_mon || null,
+            nam_kinh_nghiem: nam_kinh_nghiem !== undefined && nam_kinh_nghiem !== '' ? parseInt(nam_kinh_nghiem) : null,
+            email: email || null,
+            phone: phone || null
+        };
+        
         const [result] = await this.pool.query(
             `UPDATE bacsi SET
-             ho_ten=?, hoc_vi=?, chuc_vu=?, chuyen_mon=?, nam_kinh_nghiem=?,
-             email=?, phone=?, diachi=?
+             ho_ten=?, hoc_vi=?, chuyen_mon=?, nam_kinh_nghiem=?,
+             email=?, phone=?
              WHERE id_bacsi=?`,
-            [ho_ten, hoc_vi, chuc_vu, chuyen_mon, nam_kinh_nghiem, email, phone, diachi, id_bacsi]
+            [
+                updateData.ho_ten, 
+                updateData.hoc_vi, 
+                updateData.chuyen_mon, 
+                updateData.nam_kinh_nghiem,
+                updateData.email, 
+                updateData.phone, 
+                id_bacsi
+            ]
         );
         return result;
     }
@@ -35,18 +54,22 @@ class DoctorDHSTModel {
         let dateCondition = '';
         let params = [id_bacsi];
         if (ngay) {
-            dateCondition = 'AND dl.ngay = ?';
+            dateCondition = 'AND dl.ngay_dat = ?';
             params.push(ngay);
         }
 
         const [rows] = await this.pool.query(
             `SELECT
-                dl.id_datlich, dl.ngay, dl.khung_gio, 
-                dl.ten_benhnhan, dl.trang_thai, bn.id_benhnhan
-             FROM dat_lich dl
-             LEFT JOIN benhnhan bn ON dl.sdt = bn.phone
+                dl.id_datlich, 
+                dl.ngay_dat as ngay, 
+                TIME_FORMAT(dl.gio_dat, '%H:%i') as khung_gio, 
+                bn.ho_ten as ten_benhnhan, 
+                dl.trang_thai, 
+                bn.id_benhnhan
+             FROM datlich dl
+             LEFT JOIN benhnhan bn ON dl.id_benhnhan = bn.id_benhnhan
              WHERE dl.id_bacsi = ? ${dateCondition}
-             ORDER BY dl.ngay, dl.khung_gio`,
+             ORDER BY dl.ngay_dat, dl.gio_dat`,
             params
         );
         return rows;
@@ -56,22 +79,43 @@ class DoctorDHSTModel {
         const [rows] = await this.pool.query(
             `SELECT 
                 COUNT(id_datlich) AS so_benh_nhan,
-                SUM(CASE WHEN trang_thai = 'HOAN_THANH' THEN 1 ELSE 0 END) AS da_kham
-             FROM dat_lich
-             WHERE id_bacsi = ? AND ngay = ?`,
+                SUM(CASE WHEN trang_thai = 'Da xac nhan' THEN 1 ELSE 0 END) AS da_kham
+             FROM datlich
+             WHERE id_bacsi = ? AND ngay_dat = ?`,
             [id_bacsi, today]
         );
         return rows[0];
+    }
+
+    // Lấy id_datlich từ id_benhnhan và id_bacsi (lấy lịch hẹn gần nhất)
+    async findDatlichByBenhnhanAndBacsi(id_benhnhan, id_bacsi) {
+        const [rows] = await this.pool.query(
+            `SELECT id_datlich, ngay_dat, gio_dat, trang_thai
+             FROM datlich
+             WHERE id_benhnhan = ? AND id_bacsi = ?
+             ORDER BY ngay_dat DESC, gio_dat DESC
+             LIMIT 1`,
+            [id_benhnhan, id_bacsi]
+        );
+        return rows[0] || null;
     }
 
     // --- Medical Record & Prescription Queries ---
     async findAppointmentDetails(id_datlich) {
         const [rows] = await this.pool.query(
             `SELECT
-                dl.id_datlich, DATE_FORMAT(dl.ngay, '%Y-%m-%d') as ngay_kham, dl.khung_gio, dl.ten_benhnhan AS ten_dat_lich, dl.sdt,
-                bn.id_benhnhan, bn.ho_ten, bn.gioi_tinh, DATE_FORMAT(bn.ngay_sinh, '%Y-%m-%d') as ngay_sinh, bn.dia_chi
-             FROM dat_lich dl
-             LEFT JOIN benhnhan bn ON dl.sdt = bn.phone
+                dl.id_datlich, 
+                DATE_FORMAT(dl.ngay_dat, '%Y-%m-%d') as ngay_kham, 
+                TIME_FORMAT(dl.gio_dat, '%H:%i') as khung_gio,
+                bn.id_benhnhan, 
+                bn.ho_ten, 
+                bn.ho_ten AS ten_dat_lich,
+                bn.gioi_tinh, 
+                DATE_FORMAT(bn.ngay_sinh, '%Y-%m-%d') as ngay_sinh, 
+                bn.dia_chi,
+                NULL as sdt
+             FROM datlich dl
+             LEFT JOIN benhnhan bn ON dl.id_benhnhan = bn.id_benhnhan
              WHERE dl.id_datlich = ?`,
             [id_datlich]
         );
@@ -79,80 +123,199 @@ class DoctorDHSTModel {
     }
 
     async findMedicalRecord(id_datlich) {
-        const [rows] = await this.pool.query(
-            `SELECT trieu_chung, chuan_doan, ghi_chu 
-             FROM ho_so_kham 
-             WHERE id_datlich = ?`,
+        // Lấy id_lichkham từ datlich trước
+        const [lichkhamRows] = await this.pool.query(
+            `SELECT id_lichkham FROM lichkham WHERE id_datlich = ? LIMIT 1`,
             [id_datlich]
         );
-        // Lưu ý: Trường ket_qua_xet_nghiem không có trong schema bạn cung cấp, chỉ có trieu_chung, chuan_doan, ghi_chu
-        return rows[0];
+        
+        if (!lichkhamRows || lichkhamRows.length === 0) {
+            return null;
+        }
+        
+        const id_lichkham = lichkhamRows[0].id_lichkham;
+        
+        const [rows] = await this.pool.query(
+            `SELECT trieu_chung, chan_doan as chuan_doan, ghi_chu, thuoc_ke_don
+             FROM hosokhambenh 
+             WHERE id_lichkham = ?`,
+            [id_lichkham]
+        );
+        return rows[0] || null;
     }
 
     async findPrescriptionDetails(id_datlich) {
-        const [rows] = await this.pool.query(
-            `SELECT 
-                ct.ten_thuoc, ct.lieu_luong, ct.so_ngay, ct.cach_dung
-             FROM ho_so_kham h
-             JOIN toa_thuoc t ON h.id_hoso = t.id_hoso
-             JOIN chi_tiet_thuoc ct ON t.id_toa = ct.id_toa
-             WHERE h.id_datlich = ?`,
+        // Lấy id_lichkham từ datlich
+        const [lichkhamRows] = await this.pool.query(
+            `SELECT id_lichkham FROM lichkham WHERE id_datlich = ? LIMIT 1`,
             [id_datlich]
         );
-        return rows;
+        
+        if (!lichkhamRows || lichkhamRows.length === 0) {
+            return [];
+        }
+        
+        const id_lichkham = lichkhamRows[0].id_lichkham;
+        
+        // Lấy thuốc từ thuoc_ke_don trong hosokhambenh (dạng text)
+        const [rows] = await this.pool.query(
+            `SELECT thuoc_ke_don
+             FROM hosokhambenh 
+             WHERE id_lichkham = ?`,
+            [id_lichkham]
+        );
+        
+        // Trả về mảng rỗng vì schema không có bảng toa_thuoc/chi_tiet_thuoc
+        // Thuốc được lưu dạng text trong thuoc_ke_don
+        return rows.length > 0 && rows[0].thuoc_ke_don ? [{ thuoc_ke_don: rows[0].thuoc_ke_don }] : [];
     }
 
     async upsertMedicalRecord(data, id_benhnhan) {
         const { id_datlich, id_bacsi, trieu_chung, chuan_doan, ghi_chu } = data;
         
-        await this.pool.query(
-            `INSERT INTO ho_so_kham 
-            (id_datlich, id_benhnhan, id_bacsi, trieu_chung, chuan_doan, ghi_chu, trang_thai)
-            VALUES (?, ?, ?, ?, ?, ?, 'DA_KHAM')
-            ON DUPLICATE KEY UPDATE
-            id_benhnhan=VALUES(id_benhnhan), id_bacsi=VALUES(id_bacsi), trieu_chung=VALUES(trieu_chung), 
-            chuan_doan=VALUES(chuan_doan), ghi_chu=VALUES(ghi_chu), trang_thai='DA_KHAM'`,
-            [id_datlich, id_benhnhan, id_bacsi, trieu_chung, chuan_doan, ghi_chu]
+        // Lấy hoặc tạo id_lichkham từ datlich
+        let [lichkhamRows] = await this.pool.query(
+            `SELECT id_lichkham FROM lichkham WHERE id_datlich = ? LIMIT 1`,
+            [id_datlich]
         );
         
+        let id_lichkham;
+        if (!lichkhamRows || lichkhamRows.length === 0) {
+            // Tạo mới lichkham nếu chưa có
+            // Lấy thông tin từ datlich để tạo lichkham
+            const [datlichInfo] = await this.pool.query(
+                `SELECT ngay_dat FROM datlich WHERE id_datlich = ?`,
+                [id_datlich]
+            );
+            
+            if (!datlichInfo || datlichInfo.length === 0) {
+                throw new Error('Không tìm thấy thông tin đặt lịch');
+            }
+            
+            // Lấy id_letan đầu tiên (vì id_letan là NOT NULL trong schema)
+            const [letanRows] = await this.pool.query(
+                `SELECT id_letan FROM letan LIMIT 1`
+            );
+            
+            if (!letanRows || letanRows.length === 0) {
+                throw new Error('Không tìm thấy lễ tân trong hệ thống');
+            }
+            
+            // Tạo lichkham mới (id_letan là NOT NULL trong schema)
+            const [lichkhamResult] = await this.pool.query(
+                `INSERT INTO lichkham (id_datlich, id_letan, ngay_kham)
+                 VALUES (?, ?, ?)`,
+                [id_datlich, letanRows[0].id_letan, datlichInfo[0].ngay_dat]
+            );
+            
+            id_lichkham = lichkhamResult.insertId;
+        } else {
+            id_lichkham = lichkhamRows[0].id_lichkham;
+        }
+        
+        // Kiểm tra xem đã có hồ sơ khám bệnh chưa
+        const [existingHoso] = await this.pool.query(
+            `SELECT id_hoso FROM hosokhambenh WHERE id_lichkham = ? LIMIT 1`,
+            [id_lichkham]
+        );
+        
+        if (existingHoso && existingHoso.length > 0) {
+            // UPDATE nếu đã có
+            await this.pool.query(
+                `UPDATE hosokhambenh 
+                SET trieu_chung = ?, chan_doan = ?, ghi_chu = ?
+                WHERE id_lichkham = ?`,
+                [trieu_chung, chuan_doan, ghi_chu, id_lichkham]
+            );
+        } else {
+            // INSERT nếu chưa có
+            await this.pool.query(
+                `INSERT INTO hosokhambenh 
+                (id_lichkham, trieu_chung, chan_doan, ghi_chu)
+                VALUES (?, ?, ?, ?)`,
+                [id_lichkham, trieu_chung, chuan_doan, ghi_chu]
+            );
+        }
+        
         await this.pool.query(
-            `UPDATE dat_lich SET trang_thai = 'HOAN_THANH' WHERE id_datlich = ?`,
+            `UPDATE datlich SET trang_thai = 'Da xac nhan' WHERE id_datlich = ?`,
             [id_datlich]
         );
     }
     
     async savePrescription(connection, id_datlich, id_benhnhan, id_bacsi, toa_thuoc) {
-        
-        // 1. Đảm bảo hồ sơ khám tồn tại và lấy id_hoso
-        const [hsInsertResult] = await connection.query(
-            `INSERT INTO ho_so_kham (id_datlich, id_benhnhan, id_bacsi)
-             VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE id_hoso=LAST_INSERT_ID(id_hoso), id_bacsi=VALUES(id_bacsi)`,
-            [id_datlich, id_benhnhan, id_bacsi]
+        // Lấy hoặc tạo id_lichkham từ datlich
+        let [lichkhamRows] = await connection.query(
+            `SELECT id_lichkham FROM lichkham WHERE id_datlich = ? LIMIT 1`,
+            [id_datlich]
         );
-        const id_hoso = hsInsertResult.insertId;
-
-        // 2. Chèn vào toa_thuoc (giả sử một hồ sơ khám chỉ có 1 toa/ngày)
-        const [toaInsertResult] = await connection.query(
-            `INSERT INTO toa_thuoc (id_hoso, id_benhnhan, id_bacsi)
-             VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE id_toa=LAST_INSERT_ID(id_toa), id_bacsi=VALUES(id_bacsi)`,
-            [id_hoso, id_benhnhan, id_bacsi]
-        );
-        const id_toa = toaInsertResult.insertId;
-
-        // 3. Xóa chi tiết thuốc cũ
-        await connection.query('DELETE FROM chi_tiet_thuoc WHERE id_toa = ?', [id_toa]);
-
-        // 4. Chèn chi tiết thuốc mới
-        const insertCtSql = `INSERT INTO chi_tiet_thuoc (id_toa, ten_thuoc, lieu_luong, so_ngay, cach_dung) VALUES ?`;
-        const ctValues = toa_thuoc.map(drug => [
-            id_toa, drug.ten_thuoc, drug.lieu_luong, drug.so_ngay, drug.cach_dung
-        ]);
         
-        if (ctValues.length > 0) {
-            await connection.query(insertCtSql, [ctValues]);
+        let id_lichkham;
+        if (!lichkhamRows || lichkhamRows.length === 0) {
+            // Tạo mới lichkham nếu chưa có
+            const [datlichInfo] = await connection.query(
+                `SELECT ngay_dat FROM datlich WHERE id_datlich = ?`,
+                [id_datlich]
+            );
+            
+            if (!datlichInfo || datlichInfo.length === 0) {
+                throw new Error('Không tìm thấy thông tin đặt lịch');
+            }
+            
+            // Lấy id_letan đầu tiên (vì id_letan là NOT NULL trong schema)
+            const [letanRows] = await connection.query(
+                `SELECT id_letan FROM letan LIMIT 1`
+            );
+            
+            if (!letanRows || letanRows.length === 0) {
+                throw new Error('Không tìm thấy lễ tân trong hệ thống');
+            }
+            
+            const [lichkhamResult] = await connection.query(
+                `INSERT INTO lichkham (id_datlich, id_letan, ngay_kham)
+                 VALUES (?, ?, ?)`,
+                [id_datlich, letanRows[0].id_letan, datlichInfo[0].ngay_dat]
+            );
+            
+            id_lichkham = lichkhamResult.insertId;
+        } else {
+            id_lichkham = lichkhamRows[0].id_lichkham;
         }
+        
+        // Chuyển đổi mảng toa_thuoc thành chuỗi text để lưu vào thuoc_ke_don
+        const thuocText = toa_thuoc.map(drug => 
+            `${drug.ten_thuoc || ''} - Liều lượng: ${drug.lieu_luong || ''} - ${drug.so_ngay || ''} ngày - Cách dùng: ${drug.cach_dung || ''}`
+        ).join('\n');
+        
+        // Kiểm tra xem đã có hồ sơ khám bệnh chưa
+        const [existingHoso] = await connection.query(
+            `SELECT id_hoso FROM hosokhambenh WHERE id_lichkham = ? LIMIT 1`,
+            [id_lichkham]
+        );
+        
+        if (existingHoso && existingHoso.length > 0) {
+            // UPDATE nếu đã có
+            await connection.query(
+                `UPDATE hosokhambenh 
+                SET thuoc_ke_don = ?
+                WHERE id_lichkham = ?`,
+                [thuocText, id_lichkham]
+            );
+        } else {
+            // INSERT nếu chưa có
+            await connection.query(
+                `INSERT INTO hosokhambenh 
+                (id_lichkham, thuoc_ke_don)
+                VALUES (?, ?)`,
+                [id_lichkham, thuocText]
+            );
+        }
+        
+        // Cập nhật trạng thái đặt lịch
+        await connection.query(
+            `UPDATE datlich SET trang_thai = 'Da xac nhan' WHERE id_datlich = ?`,
+            [id_datlich]
+        );
     }
 }
 module.exports = DoctorDHSTModel;

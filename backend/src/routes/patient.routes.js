@@ -8,4 +8,5 @@ router.post('/search/verify-otp', patientController.verifyOtpAndGetPatients);
 router.get('/visits/:patientId', patientController.getPatientVisits);
 router.get('/visit-details/:lichKhamId', patientController.getVisitDetails); // Đổi tên để rõ ràng hơn
 router.get('/visit-details/:lichKhamId/download-pdf', patientController.downloadVisitPdf);
+router.get('/detail', patientController.getPatientDetail); // GET /api/patient/detail?id_benhnhan=...
 module.exports = router;

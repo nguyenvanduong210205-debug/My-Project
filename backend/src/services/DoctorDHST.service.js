@@ -9,14 +9,23 @@ class DoctorDHSTService {
 
     // --- Profile & Schedule Services ---
     async getProfile(id_bacsi) {
-        console.log("Fetching profile for doctor ID:", id_bacsi);
-        console.log("Check doctorModel:", this?.doctorModel);
-        return await this?.doctorModel?.findDoctorProfile(id_bacsi);
+        return await this.doctorModel.findDoctorProfile(id_bacsi);
     }
 
     async updateProfile(data) {
         if (!data.id_bacsi) throw new Error("Missing doctor ID.");
+        
+        // Validation
+        if (!data.ho_ten || data.ho_ten.trim() === '') {
+            throw new Error("Họ tên không được để trống.");
+        }
+        
         const result = await this.doctorModel.updateDoctorProfile(data);
+        
+        if (result.affectedRows === 0) {
+            throw new Error("Không tìm thấy bác sĩ hoặc không có thay đổi nào.");
+        }
+        
         return result.affectedRows;
     }
 
@@ -24,20 +33,39 @@ class DoctorDHSTService {
         const schedule = await this.doctorModel.findDoctorSchedule(id_bacsi, ngay);
         
         // Định dạng lại dữ liệu và trạng thái cho Frontend
-        return schedule.map(row => ({
-            id_datlich: row.id_datlich,
-            id_benhnhan: row.id_benhnhan || 'N/A', // Dùng N/A nếu chưa tạo hồ sơ BN
-            ten_benhnhan: row.ten_benhnhan,
-            ngay: row.ngay.toISOString().split('T')[0],
-            khung_gio: row.khung_gio.substring(0, 5),
-            trang_thai: row.trang_thai === 'CHO_XAC_NHAN' ? 'Chờ xác nhận' :
-                        row.trang_thai === 'DA_TAO_HOSO' ? 'Đã tạo hồ sơ' :
-                        'Hoàn thành' // HOAN_THANH
-        }));
+        return schedule.map(row => {
+            // row.ngay đã là string từ query (ngay_dat as ngay)
+            const ngayStr = typeof row.ngay === 'string' ? row.ngay : (row.ngay ? row.ngay.toISOString().split('T')[0] : '');
+            // row.khung_gio đã được format từ query
+            const gioStr = row.khung_gio || '';
+            
+            // Map trạng thái từ schema
+            let trangThaiText = row.trang_thai;
+            if (row.trang_thai === 'Cho xac nhan') {
+                trangThaiText = 'Chờ xác nhận';
+            } else if (row.trang_thai === 'Da xac nhan') {
+                trangThaiText = 'Đã xác nhận';
+            } else if (row.trang_thai === 'Huy') {
+                trangThaiText = 'Hủy';
+            }
+            
+            return {
+                id_datlich: row.id_datlich,
+                id_benhnhan: row.id_benhnhan || 'N/A',
+                ten_benhnhan: row.ten_benhnhan || 'Chưa có thông tin',
+                ngay: ngayStr,
+                khung_gio: gioStr,
+                trang_thai: trangThaiText
+            };
+        });
     }
     
     async getStatistics(id_bacsi, today) {
         return await this.doctorModel.findDailyStatistics(id_bacsi, today);
+    }
+
+    async getDatlichByBenhnhanAndBacsi(id_benhnhan, id_bacsi) {
+        return await this.doctorModel.findDatlichByBenhnhanAndBacsi(id_benhnhan, id_bacsi);
     }
 
 

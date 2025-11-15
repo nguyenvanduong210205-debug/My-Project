@@ -1,8 +1,31 @@
 // controllers/DoctorDHST.controller.js
 const DoctorDHSTService = require('../services/DoctorDHST.service');
+const db = require('../../config/db');
 
-// Hàm tạo Service instance cho mỗi request
-const getService = (req) => new DoctorDHSTService(req.pool);
+// Tạo Service instance một lần với pool từ config
+const service = new DoctorDHSTService(db);
+
+// --- 0. GET ID_BACSI FROM ID_TAIKHOAN ---
+exports.getBacsiIdFromTaikhoan = async (req, res) => {
+    const { id_taikhoan } = req.query;
+    if (!id_taikhoan) return res.status(400).send({ error: "Missing id_taikhoan." });
+
+    try {
+        const [rows] = await db.query(
+            `SELECT id_bacsi FROM bacsi WHERE id_taikhoan = ? LIMIT 1`,
+            [id_taikhoan]
+        );
+
+        if (!rows || rows.length === 0) {
+            return res.status(404).send({ error: "Doctor not found for this account." });
+        }
+
+        res.status(200).json({ data: { id_bacsi: rows[0].id_bacsi } });
+    } catch (error) {
+        console.error("Error in getBacsiIdFromTaikhoan:", error);
+        res.status(500).send({ error: "Internal server error." });
+    }
+};
 
 // --- 1. PROFILE ---
 exports.getDoctorProfile = async (req, res) => {
@@ -10,7 +33,6 @@ exports.getDoctorProfile = async (req, res) => {
     if (!id_bacsi) return res.status(400).send({ error: "Missing doctor ID." });
 
     try {
-        const service = getService(req);
         const profile = await service.getProfile(id_bacsi);
 
         if (!profile) return res.status(404).send({ error: "Doctor not found." });
@@ -27,7 +49,6 @@ exports.updateDoctorProfile = async (req, res) => {
     if (!data.id_bacsi) return res.status(400).send({ error: "Missing doctor ID." });
 
     try {
-        const service = getService(req);
         await service.updateProfile(data);
 
         res.status(200).json({ data: { success: true }, message: "Profile updated successfully." });
@@ -43,7 +64,6 @@ exports.getDoctorSchedule = async (req, res) => {
     if (!id_bacsi) return res.status(400).send({ error: "Missing doctor ID." });
 
     try {
-        const service = getService(req);
         const schedule = await service.getSchedule(id_bacsi, ngay);
 
         res.status(200).json({ data: schedule });
@@ -60,7 +80,6 @@ exports.getDailyStatistics = async (req, res) => {
 
     try {
         const today = new Date().toISOString().split('T')[0]; // Lấy ngày YYYY-MM-DD
-        const service = getService(req);
         const stats = await service.getStatistics(id_bacsi, today);
 
         res.status(200).json({ data: { 
@@ -79,7 +98,6 @@ exports.getFullRecordDetail = async (req, res) => {
     if (!id_datlich) return res.status(400).send({ error: "Missing datlich ID." });
 
     try {
-        const service = getService(req);
         const details = await service.getAllRecordDetails(id_datlich);
 
         if (!details) return res.status(404).send({ error: "Appointment not found." });
@@ -91,13 +109,26 @@ exports.getFullRecordDetail = async (req, res) => {
     }
 };
 
-// --- 5. SAVE RECORDS ---
+// --- 5. GET DATLICH BY BENHNHAN AND BACSI ---
+exports.getDatlichByBenhnhan = async (req, res) => {
+    const { id_benhnhan, id_bacsi } = req.query;
+    if (!id_benhnhan || !id_bacsi) return res.status(400).send({ error: "Missing id_benhnhan or id_bacsi." });
+
+    try {
+        const datlich = await service.getDatlichByBenhnhanAndBacsi(id_benhnhan, id_bacsi);
+        res.status(200).json({ data: datlich });
+    } catch (error) {
+        console.error("Error in getDatlichByBenhnhan:", error);
+        res.status(500).send({ error: "Internal server error." });
+    }
+};
+
+// --- 6. SAVE RECORDS ---
 exports.saveMedicalRecord = async (req, res) => {
     const data = req.body;
     if (!data.id_datlich || !data.id_bacsi) return res.status(400).send({ error: "Missing required fields." });
 
     try {
-        const service = getService(req);
         await service.saveRecord(data);
         res.status(200).json({ data: { success: true }, message: "Medical record saved successfully." });
     } catch (error) {
@@ -111,7 +142,6 @@ exports.savePrescription = async (req, res) => {
     if (!data.id_datlich || !data.id_bacsi || !data.toa_thuoc) return res.status(400).send({ error: "Missing required fields." });
 
     try {
-        const service = getService(req);
         await service.savePrescription(data);
         res.status(200).json({ data: { success: true }, message: "Prescription saved successfully." });
     } catch (error) {
